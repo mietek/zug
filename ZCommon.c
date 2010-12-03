@@ -19,7 +19,7 @@ CGSize ZGuessRatio(CGRect rect, CGRect bounds) {
 	CGSize ratio;
 	ratio.width = rect.size.width / bounds.size.width;
 	ratio.height = rect.size.height / bounds.size.height;
-	// debugf("ZGuessRatio: %g %g\n", ratio.width, ratio.height);
+	// debugf("ZGuessRatio: %g %g", ratio.width, ratio.height);
 	return ratio;
 }
 
@@ -34,7 +34,7 @@ ZAnchor ZGuessAnchor(CGRect rect, CGRect bounds) {
 	if (rect.origin.y + rect.size.height == bounds.origin.y + bounds.size.height)
 		anchor |= Z_BOTTOM;
 	anchor = ZNormalizeAnchor(anchor);
-	// debugf("ZGuessAnchor: %d\n", anchor);
+	// debugf("ZGuessAnchor: %d", anchor);
 	return anchor;
 }
 
@@ -79,14 +79,14 @@ AXUIElementRef ZCreateFrontApplication() {
 	OSErr err1;
 	ProcessSerialNumber psn;
 	if ((err1 = GetFrontProcess(&psn)))
-		haltf("Error in ZCreateFrontApplication(): GetFrontProcess() -> %d\n", err1);
+		haltf("Error in ZCreateFrontApplication(): GetFrontProcess() -> %d", err1);
 	OSStatus err2;
 	pid_t pid;
 	if ((err2 = GetProcessPID(&psn, &pid)))
-		haltf("Error in ZCreateFrontApplication(): GetProcessPID() -> %d\n", err2);
+		haltf("Error in ZCreateFrontApplication(): GetProcessPID() -> %d", err2);
 	AXUIElementRef frontApp;
 	if (!(frontApp = AXUIElementCreateApplication(pid)))
-		halt("Error in ZCreateFrontApplication(): AXUIElementCreateApplication() -> NULL\n");
+		halt("Error in ZCreateFrontApplication(): AXUIElementCreateApplication() -> NULL");
 	return frontApp;
 }
 
@@ -96,7 +96,7 @@ AXUIElementRef ZCopyFrontWindow(AXUIElementRef frontApp) {
 	if ((err = AXUIElementCopyAttributeValue(frontApp, kAXFocusedWindowAttribute, (CFTypeRef *)&frontWin)) && err == kAXErrorNoValue)
 		return NULL;
 	if (err)
-		haltf("Error in ZCopyFrontWindow(): AXUIElementCopyAttributeValue() -> %d\n", err);
+		haltf("Error in ZCopyFrontWindow(): AXUIElementCopyAttributeValue() -> %d", err);
 	return frontWin;
 }
 
@@ -112,9 +112,9 @@ CGPoint ZGetWindowOrigin(AXUIElementRef win) {
 	AXValueRef originVal;
 	CGPoint origin;
 	if ((err = AXUIElementCopyAttributeValue(win, kAXPositionAttribute, (CFTypeRef *)&originVal)))
-		haltf("Error in ZGetWindowOrigin(): AXUIElementCopyAttributeValue() -> %d\n", err);
+		haltf("Error in ZGetWindowOrigin(): AXUIElementCopyAttributeValue() -> %d", err);
 	if (!AXValueGetValue(originVal, kAXValueCGPointType, &origin))
-		halt("Error in ZGetWindowOrigin(): AXValueGetValue() -> false\n");
+		halt("Error in ZGetWindowOrigin(): AXValueGetValue() -> false");
 	CFRelease(originVal);
 	return origin;
 }
@@ -124,9 +124,9 @@ CGSize ZGetWindowSize(AXUIElementRef win) {
 	AXValueRef sizeVal;
 	CGSize size;
 	if ((err = AXUIElementCopyAttributeValue(win, kAXSizeAttribute, (CFTypeRef *)&sizeVal)))
-		haltf("Error in ZGetWindowSize(): AXUIElementCopyAttributeValue() -> %d\n", err);
+		haltf("Error in ZGetWindowSize(): AXUIElementCopyAttributeValue() -> %d", err);
 	if (!AXValueGetValue(sizeVal, kAXValueCGSizeType, &size))
-		halt("Error in ZGetWindowSize(): AXValueGetValue() -> false\n");
+		halt("Error in ZGetWindowSize(): AXValueGetValue() -> false");
 	CFRelease(sizeVal);
 	return size;
 }
@@ -142,9 +142,9 @@ void ZSetWindowOrigin(AXUIElementRef win, CGPoint origin) {
 	AXError err;
 	AXValueRef originVal;
 	if (!(originVal = AXValueCreate(kAXValueCGPointType, &origin)))
-		halt("Error in ZSetWindowOrigin(): AXValueCreate() -> NULL\n");
+		halt("Error in ZSetWindowOrigin(): AXValueCreate() -> NULL");
 	if ((err = AXUIElementSetAttributeValue(win, kAXPositionAttribute, originVal)))
-		haltf("Error in ZSetWindowOrigin(): AXUIElementSetAttributeValue() -> %d\n", err);
+		haltf("Error in ZSetWindowOrigin(): AXUIElementSetAttributeValue() -> %d", err);
 	CFRelease(originVal);
 }
 
@@ -152,9 +152,9 @@ void ZSetWindowSize(AXUIElementRef win, CGSize size) {
 	AXError err;
 	AXValueRef sizeVal;
 	if (!(sizeVal = AXValueCreate(kAXValueCGSizeType, &size)))
-		halt("Error in ZSetWindowSize(): AXValueCreate() -> NULL\n");
+		halt("Error in ZSetWindowSize(): AXValueCreate() -> NULL");
 	if ((err = AXUIElementSetAttributeValue(win, kAXSizeAttribute, sizeVal)))
-		haltf("Error in ZSetWindowSize(): AXUIElementSetAttributeValue() -> %d\n", err);
+		haltf("Error in ZSetWindowSize(): AXUIElementSetAttributeValue() -> %d", err);
 	CFRelease(sizeVal);
 }
 

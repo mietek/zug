@@ -10,14 +10,14 @@ OSStatus ZHandleSignedHotKey(EventHandlerCallRef eventHandler, EventRef event, v
 	ZHotKeyHandler handlerFunc = (ZHotKeyHandler)userData;
 	OSType eventClass;
 	if ((eventClass = GetEventClass(event)) != kEventClassKeyboard)
-		haltf("Error in ZHandleSignedHotKey(): eventClass == %d\n", eventClass);
+		haltf("Error in ZHandleSignedHotKey(): eventClass == %d", eventClass);
 	UInt32 eventKind;
 	if ((eventKind = GetEventKind(event)) != kEventHotKeyPressed)
-		haltf("Error in ZHandleSignedHotKey(): kind == %d\n", eventKind);
+		haltf("Error in ZHandleSignedHotKey(): kind == %d", eventKind);
 	OSStatus err;
 	EventHotKeyID signedHotKeyId;
 	if ((err = GetEventParameter(event, kEventParamDirectObject, typeEventHotKeyID, NULL, sizeof(EventHotKeyID), NULL, &signedHotKeyId)))
-		haltf("Error in ZHandleSignedHotKey(): GetEventParameter() -> %d\n", err);
+		haltf("Error in ZHandleSignedHotKey(): GetEventParameter() -> %d", err);
 	handlerFunc(signedHotKeyId.id);
 	return noErr;
 }
@@ -29,7 +29,7 @@ void ZInstallHotKeyHandler(ZHotKeyHandler handlerFunc) {
 	eventType.eventKind = kEventHotKeyPressed;
 	OSStatus err;
 	if ((err = InstallEventHandler(eventTarget, &ZHandleSignedHotKey, 1, &eventType, handlerFunc, NULL)))
-		haltf("Error in ZInstallHotKeyHandler(): InstallEventHandler() -> %d\n", err);
+		haltf("Error in ZInstallHotKeyHandler(): InstallEventHandler() -> %d", err);
 }
 
 EventHotKeyRef ZRegisterHotKey(UInt32 hotKeyCode, UInt32 hotKeyMods, UInt32 hotKeyId) {
@@ -40,6 +40,6 @@ EventHotKeyRef ZRegisterHotKey(UInt32 hotKeyCode, UInt32 hotKeyMods, UInt32 hotK
 	OSStatus err;
 	EventHotKeyRef hotKeyRef;
 	if ((err = RegisterEventHotKey(hotKeyCode, hotKeyMods, signedHotKeyId, eventTarget, 0, &hotKeyRef)))
-		haltf("Error in ZRegisterHotKey: RegisterEventHotKey() -> %d\n", err);
+		haltf("Error in ZRegisterHotKey: RegisterEventHotKey() -> %d", err);
 	return hotKeyRef;
 }

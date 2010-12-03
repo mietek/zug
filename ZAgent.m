@@ -14,7 +14,7 @@ void ZHandleHotKey(ZHotKey hotKey) {
 	CGRect winBounds = ZGetWindowBounds(win);
 	NSScreen *screen, *newScreen;
 	if (!(screen = [NSScreen screenWithRect: ZFlipRect(winBounds)]))
-		halt("Error in ZHandleHotKey(): [NSScreen screenWithRect:] -> nil\n");
+		halt("Error in ZHandleHotKey(): [NSScreen screenWithRect:] -> nil");
 	CGRect screenBounds = ZFlipRect([screen visibleFrame]), newScreenBounds;
 	ZAnchor anchor;
 	CGSize ratio;
@@ -37,7 +37,7 @@ void ZHandleHotKey(ZHotKey hotKey) {
 	else if (hotKey & Z_RESIZE)
 		newSize = CGSizeMake(roundf(newScreenBounds.size.width * ratio.width), roundf(newScreenBounds.size.height * ratio.height));
 	else
-		haltf("Error in ZHandleHotKey(): hotKey == %d\n", hotKey);
+		haltf("Error in ZHandleHotKey(): hotKey == %d", hotKey);
 	CGRect newBounds = ZAnchorRect(anchor, newSize, newScreenBounds);
 	ZSetWindowBounds(win, newBounds);
 }

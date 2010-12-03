@@ -52,17 +52,17 @@
 	CGDirectDisplayID displayIDs[Z_MAX_DISPLAYS];
 	uint32_t displayIDCount;
 	if ((err = CGGetDisplaysWithRect(ZFlipRect(aRect), Z_MAX_DISPLAYS, displayIDs, &displayIDCount)))
-		haltf("Error in [NSScreen screenWithRect:]: CGGetDisplaysWithRect() -> %d\n", err);
+		haltf("Error in [NSScreen screenWithRect:]: CGGetDisplaysWithRect() -> %d", err);
 	uint32_t screenCount = 0, i;
 	NSScreen *screens[displayIDCount];
 	for (i = 0; i < displayIDCount; i++) {
 		if (CGDisplayIsActive(displayIDs[i])) {
 			if (!(screens[screenCount] = [NSScreen screenWithDisplayID: displayIDs[i]]))
-				halt("Error in [NSScreen screenWithRect:]: [NSScreen screenWithDisplay:] -> nil\n");
+				halt("Error in [NSScreen screenWithRect:]: [NSScreen screenWithDisplay:] -> nil");
 			screenCount++;
 		}
 		else
-			debug("Warning in [NSScreen screenWithRect:]: CGDisplayIsActive() -> false\n");
+			debug("Warning in [NSScreen screenWithRect:]: CGDisplayIsActive() -> false");
 	}
 	NSScreen *bestScreen = nil;
 	CGFloat bestArea = 0, area;
