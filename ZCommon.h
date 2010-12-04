@@ -5,7 +5,7 @@
 
 
 enum ZAnchor {
-	Z_NO_ANCHOR,
+	Z_NO_ANCHOR = 0,
 	Z_CENTER,
 	Z_LEFT,
 	Z_RIGHT,
@@ -17,9 +17,10 @@ enum ZAnchor {
 	Z_BOTTOM_RIGHT
 };
 typedef UInt32 ZAnchor;
+#define Z_ANCHOR_COUNT 9
 
 enum ZIndex {
-	Z_NO_INDEX,
+	Z_NO_INDEX = 0,
 	Z_INDEX_1,
 	Z_INDEX_2,
 	Z_INDEX_3,
@@ -31,18 +32,23 @@ enum ZIndex {
 	Z_INDEX_9
 };
 typedef UInt32 ZIndex;
+#define Z_INDEX_COUNT 9
 
 enum ZAction {
-	Z_NO_ACTION,
+	Z_NO_ACTION = 0,
 	Z_FOCUS_ACTION,
 	Z_RESIZE_ACTION,
 	Z_MOVE_ACTION
 };
 typedef UInt32 ZAction;
+#define Z_ACTION_COUNT 3
+
+typedef void (*ZKeyEventHandler)(ZAction action, UInt32 anchorCount[Z_ANCHOR_COUNT], ZIndex displayIndex);
 
 typedef struct {
+	ZKeyEventHandler handler;
 	ZAction action;
-	UInt32 anchorCount[11];
+	UInt32 anchorCount[Z_ANCHOR_COUNT];
 	ZIndex displayIndex;
 } ZKeyEventState;
 
@@ -70,8 +76,11 @@ void ZSetWindowOrigin(AXUIElementRef win, CGPoint origin);
 void ZSetWindowSize(AXUIElementRef win, CGSize size);
 void ZSetWindowBounds(AXUIElementRef win, CGRect bounds);
 
+void ZInstallKeyEventHandler(ZKeyEventHandler handler);
 CGEventRef ZHandleInternalKeyEvent(CGEventTapProxy proxy, CGEventType type, CGEventRef event, ZKeyEventState *state);
-void ZInstallKeyEventHandler();
+Boolean ZBeginAction(ZAction action, ZAnchor anchor, ZIndex displayIndex, ZKeyEventState *state);
+Boolean ZContinueAction(ZAnchor anchor, ZIndex displayIndex, ZKeyEventState *state);
+Boolean ZFinishAction(ZAction action, ZKeyEventState *state);
 
 ZAnchor ZKeycodeToAnchor(UInt32 keycode);
 Boolean ZIsKeycodeCenter(UInt32 keycode);

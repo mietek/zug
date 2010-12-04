@@ -19,6 +19,10 @@
 @end
 
 
+void ZHandleKeyEvent(ZAction action, UInt32 anchorCount[9], ZIndex displayIndex) {
+	debugf("ending action: %d, anchorCount: %d, %d %d %d %d, %d %d %d %d, displayIndex: %d", action, anchorCount[Z_CENTER], anchorCount[Z_LEFT], anchorCount[Z_RIGHT], anchorCount[Z_TOP], anchorCount[Z_BOTTOM], anchorCount[Z_TOP_LEFT], anchorCount[Z_TOP_RIGHT], anchorCount[Z_BOTTOM_LEFT], anchorCount[Z_BOTTOM_RIGHT], displayIndex);
+}
+
 int main() {
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	NSApplication *app = [NSApplication sharedApplication];
@@ -26,7 +30,7 @@ int main() {
 		NSRunCriticalAlertPanel(@"ZAgent cannot run.", @"Please enable access for assistive devices in the Universal Access system preference pane.", @"OK", @"", @"");
 		return EXIT_FAILURE;
 	}
-	ZInstallKeyEventHandler();
+	ZInstallKeyEventHandler(&ZHandleKeyEvent);
 	[app setDelegate: [[[ZAgent alloc] init] autorelease]];
 	[app run];
 	[pool release];

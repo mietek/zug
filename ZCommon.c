@@ -182,57 +182,10 @@ void ZSetWindowBounds(AXUIElementRef win, CGRect bounds) {
 }
 
 
-CGEventRef ZHandleInternalKeyEvent(CGEventTapProxy proxy, CGEventType type, CGEventRef event, ZKeyEventState *state) {
-	if (state->action == Z_NO_ACTION) {
-		if (type == kCGEventKeyDown) {
-			ZAction action = ZFlagsToAction(CGEventGetFlags(event));
-			if (action != Z_NO_ACTION) {
-				UInt32 keycode = CGEventGetIntegerValueField(event, kCGKeyboardEventKeycode);
-				ZAnchor anchor = ZKeycodeToAnchor(keycode);
-				ZIndex displayIndex = ZKeycodeToIndex(keycode);
-				if (anchor != Z_NO_ANCHOR || displayIndex != Z_NO_INDEX) {
-					debugf("starting action: %d", action);
-					state->action = action;
-					memset(state->anchorCount, 0, sizeof(state->anchorCount));
-					state->displayIndex = Z_NO_INDEX;
-					if (anchor != Z_NO_ANCHOR)
-						state->anchorCount[anchor]++;
-					if (displayIndex != Z_NO_INDEX)
-						state->displayIndex = displayIndex;
-					return NULL;
-				}
-			}
-		}
-	}
-	else {
-		if (type == kCGEventKeyDown) {
-			UInt32 keycode = CGEventGetIntegerValueField(event, kCGKeyboardEventKeycode);
-			ZAnchor anchor = ZKeycodeToAnchor(keycode);
-			ZIndex displayIndex = ZKeycodeToIndex(keycode);
-			if (anchor != Z_NO_ANCHOR || displayIndex != Z_NO_INDEX) {
-				if (anchor != Z_NO_ANCHOR)
-					state->anchorCount[anchor]++;
-				if (displayIndex != Z_NO_INDEX)
-					state->displayIndex = displayIndex;
-				return NULL;
-			}
-		}
-		else if (type == kCGEventFlagsChanged) {
-			ZAction action = ZFlagsToAction(CGEventGetFlags(event));
-			if (action == Z_NO_ACTION) {
-				debugf("ending action: %d, anchorCount: %d, %d %d %d %d, %d %d %d %d, displayIndex: %d", state->action, state->anchorCount[Z_CENTER], state->anchorCount[Z_LEFT], state->anchorCount[Z_RIGHT], state->anchorCount[Z_TOP], state->anchorCount[Z_BOTTOM], state->anchorCount[Z_TOP_LEFT], state->anchorCount[Z_TOP_RIGHT], state->anchorCount[Z_BOTTOM_LEFT], state->anchorCount[Z_BOTTOM_RIGHT], state->displayIndex);
-				state->action = Z_NO_ACTION;
-				return NULL;
-			}
-		}
-		else
-			debugf("Warning in ZHandleInternalKeyEvent(): type == %d", type);
-	}
-	return event;
-}
-
-void ZInstallKeyEventHandler() {
+void ZInstallKeyEventHandler(ZKeyEventHandler handler) {
 	static ZKeyEventState state;
+	memset(&state, 0, sizeof(state));
+	state.handler = handler;
 	CFMachPortRef tap;
 	if (!(tap = CGEventTapCreate(kCGSessionEventTap, kCGHeadInsertEventTap, kCGEventTapOptionDefault, CGEventMaskBit(kCGEventKeyDown) | CGEventMaskBit(kCGEventFlagsChanged), (CGEventTapCallBack)&ZHandleInternalKeyEvent, &state)))
 		halt("Error in ZInstallKeyEventHandler(): CGEventTapCreate() -> NULL");
@@ -242,6 +195,54 @@ void ZInstallKeyEventHandler() {
 	CFRelease(tap);
 	CFRunLoopAddSource(CFRunLoopGetCurrent(), source, kCFRunLoopCommonModes);
 	CFRelease(source);
+}
+
+CGEventRef ZHandleInternalKeyEvent(CGEventTapProxy proxy, CGEventType type, CGEventRef event, ZKeyEventState *state) {
+	ZAction action = ZFlagsToAction(CGEventGetFlags(event));
+	if (type == kCGEventKeyDown) {
+		UInt32 keycode = CGEventGetIntegerValueField(event, kCGKeyboardEventKeycode);
+		ZAnchor anchor = ZKeycodeToAnchor(keycode);
+		ZIndex displayIndex = ZKeycodeToIndex(keycode);
+		if (ZBeginAction(action, anchor, displayIndex, state))
+			return NULL;
+		if (ZContinueAction(anchor, displayIndex, state))
+			return NULL;
+	}
+	else if (type == kCGEventFlagsChanged) {
+		if (ZFinishAction(action, state))
+			return NULL;
+	}
+	return event;
+}
+
+Boolean ZBeginAction(ZAction action, ZAnchor anchor, ZIndex displayIndex, ZKeyEventState *state) {
+	if (state->action == Z_NO_ACTION && action != Z_NO_ACTION && (anchor != Z_NO_ANCHOR || displayIndex != Z_NO_INDEX)) {
+		state->action = action;
+		return ZContinueAction(anchor, displayIndex, state);
+	}
+	return false;
+}
+
+Boolean ZContinueAction(ZAnchor anchor, ZIndex displayIndex, ZKeyEventState *state) {
+	if (state->action != Z_NO_ACTION && (anchor != Z_NO_ANCHOR || displayIndex != Z_NO_INDEX)) {
+		if (anchor != Z_NO_ANCHOR)
+			state->anchorCount[anchor]++;
+		if (displayIndex != Z_NO_INDEX)
+			state->displayIndex = displayIndex;
+		return true;
+	}
+	return false;
+}
+
+Boolean ZFinishAction(ZAction action, ZKeyEventState *state) {
+	if (state->action != Z_NO_ACTION && action == Z_NO_ACTION) {
+		state->handler(state->action, state->anchorCount, state->displayIndex);
+		state->action = Z_NO_ACTION;
+		memset(state->anchorCount, 0, sizeof(state->anchorCount));
+		state->displayIndex = Z_NO_INDEX;
+		return true;
+	}
+	return false;
 }
 
 
