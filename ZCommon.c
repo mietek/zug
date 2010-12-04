@@ -15,54 +15,72 @@ CGFloat ZGetRectArea(CGRect rect) {
 	return rect.size.width * rect.size.height;
 }
 
-CGSize ZGuessRatio(CGRect rect, CGRect bounds) {
-	CGSize ratio;
-	ratio.width = rect.size.width / bounds.size.width;
-	ratio.height = rect.size.height / bounds.size.height;
-	// debugf("ZGuessRatio: %g %g", ratio.width, ratio.height);
-	return ratio;
-}
-
-ZAnchor ZGuessAnchor(CGRect rect, CGRect bounds) {
-	ZAnchor anchor = Z_CENTER;
-	if (rect.origin.x == bounds.origin.x)
-		anchor |= Z_LEFT;
-	if (rect.origin.y == bounds.origin.y)
-		anchor |= Z_TOP;
-	if (rect.origin.x + rect.size.width == bounds.origin.x + bounds.size.width)
-		anchor |= Z_RIGHT;
-	if (rect.origin.y + rect.size.height == bounds.origin.y + bounds.size.height)
-		anchor |= Z_BOTTOM;
-	anchor = ZNormalizeAnchor(anchor);
-	// debugf("ZGuessAnchor: %d", anchor);
-	return anchor;
-}
-
-ZAnchor ZNormalizeAnchor(ZAnchor anchor) {
-	ZAnchor newAnchor = anchor;
-	if (anchor & Z_LEFT && anchor & Z_RIGHT)
-		newAnchor ^= Z_LEFT | Z_RIGHT;
-	if (anchor & Z_TOP && anchor & Z_BOTTOM)
-		newAnchor ^= Z_TOP | Z_BOTTOM;
-	return newAnchor;
-}
+// CGSize ZGuessRatio(CGRect rect, CGRect bounds) {
+// 	CGSize ratio;
+// 	ratio.width = rect.size.width / bounds.size.width;
+// 	ratio.height = rect.size.height / bounds.size.height;
+// 	// debugf("ZGuessRatio: %g %g", ratio.width, ratio.height);
+// 	return ratio;
+// }
+//
+// ZAnchor ZGuessAnchor(CGRect rect, CGRect bounds) {
+// 	ZAnchor anchor = Z_CENTER;
+// 	if (rect.origin.x == bounds.origin.x)
+// 		anchor |= Z_LEFT;
+// 	if (rect.origin.y == bounds.origin.y)
+// 		anchor |= Z_TOP;
+// 	if (rect.origin.x + rect.size.width == bounds.origin.x + bounds.size.width)
+// 		anchor |= Z_RIGHT;
+// 	if (rect.origin.y + rect.size.height == bounds.origin.y + bounds.size.height)
+// 		anchor |= Z_BOTTOM;
+// 	anchor = ZNormalizeAnchor(anchor);
+// 	// debugf("ZGuessAnchor: %d", anchor);
+// 	return anchor;
+// }
+//
+// ZAnchor ZNormalizeAnchor(ZAnchor anchor) {
+// 	ZAnchor newAnchor = anchor;
+// 	if (anchor & Z_LEFT && anchor & Z_RIGHT)
+// 		newAnchor ^= Z_LEFT | Z_RIGHT;
+// 	if (anchor & Z_TOP && anchor & Z_BOTTOM)
+// 		newAnchor ^= Z_TOP | Z_BOTTOM;
+// 	return newAnchor;
+// }
 
 CGRect ZAnchorRect(ZAnchor anchor, CGSize size, CGRect bounds) {
+	if (anchor == Z_NO_ANCHOR)
+		haltf("Error in ZAnchorRect(): anchor == %d", anchor);
 	CGRect rect;
 	rect.size = size;
-	if (anchor & Z_LEFT)
+	if (ZIsAnchorLeft(anchor))
 		rect.origin.x = bounds.origin.x;
-	else if (anchor & Z_RIGHT)
+	else if (ZIsAnchorRight(anchor))
 		rect.origin.x = bounds.origin.x + bounds.size.width - rect.size.width;
 	else
 		rect.origin.x = bounds.origin.x + (bounds.size.width - rect.size.width) / 2;
-	if (anchor & Z_TOP)
+	if (ZIsAnchorTop(anchor))
 		rect.origin.y = bounds.origin.y;
-	else if (anchor & Z_BOTTOM)
+	else if (ZIsAnchorBottom(anchor))
 		rect.origin.y = bounds.origin.y + bounds.size.height - rect.size.height;
 	else
 		rect.origin.y = bounds.origin.y + (bounds.size.height - rect.size.height) / 2;
 	return rect;
+}
+
+Boolean ZIsAnchorLeft(ZAnchor anchor) {
+	return anchor == Z_LEFT || anchor == Z_TOP_LEFT || anchor == Z_BOTTOM_LEFT;
+}
+
+Boolean ZIsAnchorRight(ZAnchor anchor) {
+	return anchor == Z_RIGHT || anchor == Z_TOP_RIGHT || anchor == Z_BOTTOM_RIGHT;
+}
+
+Boolean ZIsAnchorTop(ZAnchor anchor) {
+	return anchor == Z_TOP || anchor == Z_TOP_LEFT || anchor == Z_TOP_RIGHT;
+}
+
+Boolean ZIsAnchorBottom(ZAnchor anchor) {
+	return anchor == Z_BOTTOM || anchor == Z_BOTTOM_LEFT || anchor == Z_BOTTOM_RIGHT;
 }
 
 

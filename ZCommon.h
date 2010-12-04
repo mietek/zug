@@ -5,15 +5,16 @@
 
 
 enum ZAnchor {
-	Z_CENTER       = 0x00000000,
-	Z_LEFT         = 0x00000001,
-	Z_RIGHT        = 0x00000002,
-	Z_TOP          = 0x00000004,
-	Z_BOTTOM       = 0x00000008,
-	Z_TOP_LEFT     = Z_TOP | Z_LEFT,
-	Z_TOP_RIGHT    = Z_TOP | Z_RIGHT,
-	Z_BOTTOM_LEFT  = Z_BOTTOM | Z_LEFT,
-	Z_BOTTOM_RIGHT = Z_BOTTOM | Z_RIGHT
+	Z_NO_ANCHOR,
+	Z_CENTER,
+	Z_LEFT,
+	Z_RIGHT,
+	Z_TOP,
+	Z_BOTTOM,
+	Z_TOP_LEFT,
+	Z_TOP_RIGHT,
+	Z_BOTTOM_LEFT,
+	Z_BOTTOM_RIGHT
 };
 typedef UInt32 ZAnchor;
 
@@ -25,6 +26,10 @@ CGSize ZGuessRatio(CGRect rect, CGRect bounds);
 ZAnchor ZGuessAnchor(CGRect rect, CGRect bounds);
 ZAnchor ZNormalizeAnchor(ZAnchor anchor);
 CGRect ZAnchorRect(ZAnchor anchor, CGSize size, CGRect bounds);
+Boolean ZIsAnchorLeft(ZAnchor anchor);
+Boolean ZIsAnchorRight(ZAnchor anchor);
+Boolean ZIsAnchorTop(ZAnchor anchor);
+Boolean ZIsAnchorBottom(ZAnchor anchor);
 
 bool ZAmIAuthorized();
 AXUIElementRef ZCreateFrontApplication();
