@@ -18,6 +18,20 @@ enum ZAnchor {
 };
 typedef UInt32 ZAnchor;
 
+enum ZIndex {
+	Z_NO_INDEX,
+	Z_INDEX_1,
+	Z_INDEX_2,
+	Z_INDEX_3,
+	Z_INDEX_4,
+	Z_INDEX_5,
+	Z_INDEX_6,
+	Z_INDEX_7,
+	Z_INDEX_8,
+	Z_INDEX_9
+};
+typedef UInt32 ZIndex;
+
 enum ZAction {
 	Z_NO_ACTION,
 	Z_FOCUS_ACTION,
@@ -29,6 +43,7 @@ typedef UInt32 ZAction;
 typedef struct {
 	ZAction action;
 	UInt32 anchorCount[11];
+	ZIndex displayIndex;
 } ZKeyEventState;
 
 
@@ -68,6 +83,16 @@ Boolean ZIsKeycodeTopLeft(UInt32 keycode);
 Boolean ZIsKeycodeTopRight(UInt32 keycode);
 Boolean ZIsKeycodeBottomLeft(UInt32 keycode);
 Boolean ZIsKeycodeBottomRight(UInt32 keycode);
+ZIndex ZKeycodeToIndex(UInt32 keycode);
+Boolean ZIsKeycode1(UInt32 keycode);
+Boolean ZIsKeycode2(UInt32 keycode);
+Boolean ZIsKeycode3(UInt32 keycode);
+Boolean ZIsKeycode4(UInt32 keycode);
+Boolean ZIsKeycode5(UInt32 keycode);
+Boolean ZIsKeycode6(UInt32 keycode);
+Boolean ZIsKeycode7(UInt32 keycode);
+Boolean ZIsKeycode8(UInt32 keycode);
+Boolean ZIsKeycode9(UInt32 keycode);
 ZAction ZFlagsToAction(CGEventFlags flags);
 Boolean ZAreFlagsFocus(CGEventFlags flags);
 Boolean ZAreFlagsResize(CGEventFlags flags);

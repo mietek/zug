@@ -187,12 +187,18 @@ CGEventRef ZHandleInternalKeyEvent(CGEventTapProxy proxy, CGEventType type, CGEv
 		if (type == kCGEventKeyDown) {
 			ZAction action = ZFlagsToAction(CGEventGetFlags(event));
 			if (action != Z_NO_ACTION) {
-				ZAnchor anchor = ZKeycodeToAnchor(CGEventGetIntegerValueField(event, kCGKeyboardEventKeycode));
-				if (anchor != Z_NO_ANCHOR) {
+				UInt32 keycode = CGEventGetIntegerValueField(event, kCGKeyboardEventKeycode);
+				ZAnchor anchor = ZKeycodeToAnchor(keycode);
+				ZIndex displayIndex = ZKeycodeToIndex(keycode);
+				if (anchor != Z_NO_ANCHOR || displayIndex != Z_NO_INDEX) {
 					debugf("starting action: %d", action);
 					state->action = action;
 					memset(state->anchorCount, 0, sizeof(state->anchorCount));
-					state->anchorCount[anchor]++;
+					state->displayIndex = Z_NO_INDEX;
+					if (anchor != Z_NO_ANCHOR)
+						state->anchorCount[anchor]++;
+					if (displayIndex != Z_NO_INDEX)
+						state->displayIndex = displayIndex;
 					return NULL;
 				}
 			}
@@ -200,16 +206,21 @@ CGEventRef ZHandleInternalKeyEvent(CGEventTapProxy proxy, CGEventType type, CGEv
 	}
 	else {
 		if (type == kCGEventKeyDown) {
-			ZAnchor anchor = ZKeycodeToAnchor(CGEventGetIntegerValueField(event, kCGKeyboardEventKeycode));
-			if (anchor != Z_NO_ANCHOR) {
-				state->anchorCount[anchor]++;
+			UInt32 keycode = CGEventGetIntegerValueField(event, kCGKeyboardEventKeycode);
+			ZAnchor anchor = ZKeycodeToAnchor(keycode);
+			ZIndex displayIndex = ZKeycodeToIndex(keycode);
+			if (anchor != Z_NO_ANCHOR || displayIndex != Z_NO_INDEX) {
+				if (anchor != Z_NO_ANCHOR)
+					state->anchorCount[anchor]++;
+				if (displayIndex != Z_NO_INDEX)
+					state->displayIndex = displayIndex;
 				return NULL;
 			}
 		}
 		else if (type == kCGEventFlagsChanged) {
 			ZAction action = ZFlagsToAction(CGEventGetFlags(event));
 			if (action == Z_NO_ACTION) {
-				debugf("ending action: %d, anchorCount: %d, %d %d %d %d, %d %d %d %d", state->action, state->anchorCount[Z_CENTER], state->anchorCount[Z_LEFT], state->anchorCount[Z_RIGHT], state->anchorCount[Z_TOP], state->anchorCount[Z_BOTTOM], state->anchorCount[Z_TOP_LEFT], state->anchorCount[Z_TOP_RIGHT], state->anchorCount[Z_BOTTOM_LEFT], state->anchorCount[Z_BOTTOM_RIGHT]);
+				debugf("ending action: %d, anchorCount: %d, %d %d %d %d, %d %d %d %d, displayIndex: %d", state->action, state->anchorCount[Z_CENTER], state->anchorCount[Z_LEFT], state->anchorCount[Z_RIGHT], state->anchorCount[Z_TOP], state->anchorCount[Z_BOTTOM], state->anchorCount[Z_TOP_LEFT], state->anchorCount[Z_TOP_RIGHT], state->anchorCount[Z_BOTTOM_LEFT], state->anchorCount[Z_BOTTOM_RIGHT], state->displayIndex);
 				state->action = Z_NO_ACTION;
 				return NULL;
 			}
@@ -290,6 +301,64 @@ Boolean ZIsKeycodeBottomLeft(UInt32 keycode) {
 
 Boolean ZIsKeycodeBottomRight(UInt32 keycode) {
 	return keycode == kVK_ANSI_C;
+}
+
+ZIndex ZKeycodeToIndex(UInt32 keycode) {
+	if (ZIsKeycode1(keycode))
+		return Z_INDEX_1;
+	if (ZIsKeycode2(keycode))
+		return Z_INDEX_2;
+	if (ZIsKeycode3(keycode))
+		return Z_INDEX_3;
+	if (ZIsKeycode4(keycode))
+		return Z_INDEX_4;
+	if (ZIsKeycode5(keycode))
+		return Z_INDEX_5;
+	if (ZIsKeycode6(keycode))
+		return Z_INDEX_6;
+	if (ZIsKeycode7(keycode))
+		return Z_INDEX_7;
+	if (ZIsKeycode8(keycode))
+		return Z_INDEX_8;
+	if (ZIsKeycode9(keycode))
+		return Z_INDEX_9;
+	return Z_NO_INDEX;
+}
+
+Boolean ZIsKeycode1(UInt32 keycode) {
+	return keycode == kVK_ANSI_1;
+}
+
+Boolean ZIsKeycode2(UInt32 keycode) {
+	return keycode == kVK_ANSI_2;
+}
+
+Boolean ZIsKeycode3(UInt32 keycode) {
+	return keycode == kVK_ANSI_3;
+}
+
+Boolean ZIsKeycode4(UInt32 keycode) {
+	return keycode == kVK_ANSI_4;
+}
+
+Boolean ZIsKeycode5(UInt32 keycode) {
+	return keycode == kVK_ANSI_5;
+}
+
+Boolean ZIsKeycode6(UInt32 keycode) {
+	return keycode == kVK_ANSI_6;
+}
+
+Boolean ZIsKeycode7(UInt32 keycode) {
+	return keycode == kVK_ANSI_7;
+}
+
+Boolean ZIsKeycode8(UInt32 keycode) {
+	return keycode == kVK_ANSI_8;
+}
+
+Boolean ZIsKeycode9(UInt32 keycode) {
+	return keycode == kVK_ANSI_9;
 }
 
 ZAction ZFlagsToAction(CGEventFlags flags) {
