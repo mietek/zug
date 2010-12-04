@@ -26,6 +26,7 @@ int main() {
 		NSRunCriticalAlertPanel(@"ZAgent cannot run.", @"Please enable access for assistive devices in the Universal Access system preference pane.", @"OK", @"", @"");
 		return EXIT_FAILURE;
 	}
+	ZInstallKeyEventHandler();
 	[app setDelegate: [[[ZAgent alloc] init] autorelease]];
 	[app run];
 	[pool release];

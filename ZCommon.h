@@ -18,6 +18,19 @@ enum ZAnchor {
 };
 typedef UInt32 ZAnchor;
 
+enum ZAction {
+	Z_NO_ACTION,
+	Z_FOCUS_ACTION,
+	Z_RESIZE_ACTION,
+	Z_MOVE_ACTION
+};
+typedef UInt32 ZAction;
+
+typedef struct {
+	ZAction action;
+	UInt32 anchorCount[11];
+} ZKeyEventState;
+
 
 CGFloat ZGetMainDisplayHeight();
 CGRect ZFlipRect(CGRect rect);
@@ -41,3 +54,21 @@ CGRect ZGetWindowBounds(AXUIElementRef win);
 void ZSetWindowOrigin(AXUIElementRef win, CGPoint origin);
 void ZSetWindowSize(AXUIElementRef win, CGSize size);
 void ZSetWindowBounds(AXUIElementRef win, CGRect bounds);
+
+CGEventRef ZHandleInternalKeyEvent(CGEventTapProxy proxy, CGEventType type, CGEventRef event, ZKeyEventState *state);
+void ZInstallKeyEventHandler();
+
+ZAnchor ZKeycodeToAnchor(UInt32 keycode);
+Boolean ZIsKeycodeCenter(UInt32 keycode);
+Boolean ZIsKeycodeLeft(UInt32 keycode);
+Boolean ZIsKeycodeRight(UInt32 keycode);
+Boolean ZIsKeycodeTop(UInt32 keycode);
+Boolean ZIsKeycodeBottom(UInt32 keycode);
+Boolean ZIsKeycodeTopLeft(UInt32 keycode);
+Boolean ZIsKeycodeTopRight(UInt32 keycode);
+Boolean ZIsKeycodeBottomLeft(UInt32 keycode);
+Boolean ZIsKeycodeBottomRight(UInt32 keycode);
+ZAction ZFlagsToAction(CGEventFlags flags);
+Boolean ZAreFlagsFocus(CGEventFlags flags);
+Boolean ZAreFlagsResize(CGEventFlags flags);
+Boolean ZAreFlagsMove(CGEventFlags flags);

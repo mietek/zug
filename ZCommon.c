@@ -180,3 +180,136 @@ void ZSetWindowBounds(AXUIElementRef win, CGRect bounds) {
 	ZSetWindowOrigin(win, bounds.origin);
 	ZSetWindowSize(win, bounds.size);
 }
+
+
+CGEventRef ZHandleInternalKeyEvent(CGEventTapProxy proxy, CGEventType type, CGEventRef event, ZKeyEventState *state) {
+	if (state->action == Z_NO_ACTION) {
+		if (type == kCGEventKeyDown) {
+			ZAction action = ZFlagsToAction(CGEventGetFlags(event));
+			if (action != Z_NO_ACTION) {
+				ZAnchor anchor = ZKeycodeToAnchor(CGEventGetIntegerValueField(event, kCGKeyboardEventKeycode));
+				if (anchor != Z_NO_ANCHOR) {
+					debugf("starting action: %d", action);
+					state->action = action;
+					memset(state->anchorCount, 0, sizeof(state->anchorCount));
+					state->anchorCount[anchor]++;
+					return NULL;
+				}
+			}
+		}
+	}
+	else {
+		if (type == kCGEventKeyDown) {
+			ZAnchor anchor = ZKeycodeToAnchor(CGEventGetIntegerValueField(event, kCGKeyboardEventKeycode));
+			if (anchor != Z_NO_ANCHOR) {
+				state->anchorCount[anchor]++;
+				return NULL;
+			}
+		}
+		else if (type == kCGEventFlagsChanged) {
+			ZAction action = ZFlagsToAction(CGEventGetFlags(event));
+			if (action == Z_NO_ACTION) {
+				debugf("ending action: %d, anchorCount: %d, %d %d %d %d, %d %d %d %d", state->action, state->anchorCount[Z_CENTER], state->anchorCount[Z_LEFT], state->anchorCount[Z_RIGHT], state->anchorCount[Z_TOP], state->anchorCount[Z_BOTTOM], state->anchorCount[Z_TOP_LEFT], state->anchorCount[Z_TOP_RIGHT], state->anchorCount[Z_BOTTOM_LEFT], state->anchorCount[Z_BOTTOM_RIGHT]);
+				state->action = Z_NO_ACTION;
+				return NULL;
+			}
+		}
+		else
+			debugf("Warning in ZHandleInternalKeyEvent(): type == %d", type);
+	}
+	return event;
+}
+
+void ZInstallKeyEventHandler() {
+	static ZKeyEventState state;
+	CFMachPortRef tap;
+	if (!(tap = CGEventTapCreate(kCGSessionEventTap, kCGHeadInsertEventTap, kCGEventTapOptionDefault, CGEventMaskBit(kCGEventKeyDown) | CGEventMaskBit(kCGEventFlagsChanged), (CGEventTapCallBack)&ZHandleInternalKeyEvent, &state)))
+		halt("Error in ZInstallKeyEventHandler(): CGEventTapCreate() -> NULL");
+	CFRunLoopSourceRef source;
+	if (!(source = CFMachPortCreateRunLoopSource(NULL, tap, 0)))
+		halt("Error in ZInstallKeyEventHandler(): CFMachPortCreateRunLoopSource() -> NULL");
+	CFRelease(tap);
+	CFRunLoopAddSource(CFRunLoopGetCurrent(), source, kCFRunLoopCommonModes);
+	CFRelease(source);
+}
+
+
+ZAnchor ZKeycodeToAnchor(UInt32 keycode) {
+	if (ZIsKeycodeCenter(keycode))
+		return Z_CENTER;
+	if (ZIsKeycodeLeft(keycode))
+		return Z_LEFT;
+	if (ZIsKeycodeRight(keycode))
+		return Z_RIGHT;
+	if (ZIsKeycodeTop(keycode))
+		return Z_TOP;
+	if (ZIsKeycodeBottom(keycode))
+		return Z_BOTTOM;
+	if (ZIsKeycodeTopLeft(keycode))
+		return Z_TOP_LEFT;
+	if (ZIsKeycodeTopRight(keycode))
+		return Z_TOP_RIGHT;
+	if (ZIsKeycodeBottomLeft(keycode))
+		return Z_BOTTOM_LEFT;
+	if (ZIsKeycodeBottomRight(keycode))
+		return Z_BOTTOM_RIGHT;
+	return Z_NO_ANCHOR;
+}
+
+Boolean ZIsKeycodeCenter(UInt32 keycode) {
+	return keycode == kVK_ANSI_S;
+}
+
+Boolean ZIsKeycodeLeft(UInt32 keycode) {
+	return keycode == kVK_ANSI_A;
+}
+
+Boolean ZIsKeycodeRight(UInt32 keycode) {
+	return keycode == kVK_ANSI_D;
+}
+
+Boolean ZIsKeycodeTop(UInt32 keycode) {
+	return keycode == kVK_ANSI_W;
+}
+
+Boolean ZIsKeycodeBottom(UInt32 keycode) {
+	return keycode == kVK_ANSI_X;
+}
+
+Boolean ZIsKeycodeTopLeft(UInt32 keycode) {
+	return keycode == kVK_ANSI_Q;
+}
+
+Boolean ZIsKeycodeTopRight(UInt32 keycode) {
+	return keycode == kVK_ANSI_E;
+}
+
+Boolean ZIsKeycodeBottomLeft(UInt32 keycode) {
+	return keycode == kVK_ANSI_Z;
+}
+
+Boolean ZIsKeycodeBottomRight(UInt32 keycode) {
+	return keycode == kVK_ANSI_C;
+}
+
+ZAction ZFlagsToAction(CGEventFlags flags) {
+	if (ZAreFlagsFocus(flags))
+		return Z_FOCUS_ACTION;
+	if (ZAreFlagsResize(flags))
+		return Z_RESIZE_ACTION;
+	if (ZAreFlagsMove(flags))
+		return Z_MOVE_ACTION;
+	return Z_NO_ACTION;
+}
+
+Boolean ZAreFlagsFocus(CGEventFlags flags) {
+	return flags & kCGEventFlagMaskSecondaryFn && !(flags & kCGEventFlagMaskControl) && !(flags & kCGEventFlagMaskShift);
+}
+
+Boolean ZAreFlagsResize(CGEventFlags flags) {
+	return flags & kCGEventFlagMaskSecondaryFn && flags & kCGEventFlagMaskControl && !(flags & kCGEventFlagMaskShift);
+}
+
+Boolean ZAreFlagsMove(CGEventFlags flags) {
+	return flags & kCGEventFlagMaskSecondaryFn && !(flags & kCGEventFlagMaskControl) && flags & kCGEventFlagMaskShift;
+}
