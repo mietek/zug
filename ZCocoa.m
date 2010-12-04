@@ -85,20 +85,3 @@
 }
 
 @end
-
-
-@implementation NSMenu (ZCocoa)
-
-- (NSMenuItem *)addHotKeyItemWithTitle: (NSString *)aTitle keyEquivalent: (NSString *)aKeyEquiv tag: (NSInteger)aTag alternate: (BOOL)anAlt {
-	NSMenuItem *item = [self addItemWithTitle: aTitle action: @selector(handleHotKeyItem:) keyEquivalent: aKeyEquiv];
-	[item setKeyEquivalentModifierMask: NSCommandKeyMask | NSControlKeyMask];
-	[item setTag: aTag];
-	[item setAlternate: anAlt];
-	return item;
-}
-
-- (NSMenuItem *)addHotKeyItemWithTitle: (NSString *)aTitle keyEquivalent: (NSString *)aKeyEquiv tag: (NSInteger)aTag {
-	return [self addHotKeyItemWithTitle: aTitle keyEquivalent: aKeyEquiv tag: aTag alternate: NO];
-}
-
-@end

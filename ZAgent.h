@@ -37,6 +37,4 @@ CGSize ZGetRatio(ZHotKey hotKey);
 	NSStatusItem *statusItem;
 }
 
-- (void)handleHotKeyItem: (id)sender;
-
 @end

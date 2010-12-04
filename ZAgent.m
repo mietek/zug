@@ -60,40 +60,11 @@ CGSize ZGetRatio(ZHotKey hotKey) {
 
 - (void)applicationDidFinishLaunching: (NSNotification *)aNotification {
 	NSMenu *menu = [[[NSMenu allocWithZone: [NSMenu menuZone]] init] autorelease];
-	[menu addHotKeyItemWithTitle: @"Resize to Full Screen" keyEquivalent: @"f" tag: Z_RESIZE_FULL_SCREEN];
-	[menu addItem: [NSMenuItem separatorItem]];
-	[menu addHotKeyItemWithTitle: @"Resize to Top Left" keyEquivalent: @"q" tag: Z_RESIZE_TOP_LEFT];
-	[menu addHotKeyItemWithTitle: @"Move to Top Left" keyEquivalent: @"Q" tag: Z_MOVE_TOP_LEFT alternate: YES];
-	[menu addHotKeyItemWithTitle: @"Resize to Top" keyEquivalent: @"w" tag: Z_RESIZE_TOP];
-	[menu addHotKeyItemWithTitle: @"Move to Top" keyEquivalent: @"W" tag: Z_MOVE_TOP alternate: YES];
-	[menu addHotKeyItemWithTitle: @"Resize to Top Right" keyEquivalent: @"e" tag: Z_RESIZE_TOP_RIGHT];
-	[menu addHotKeyItemWithTitle: @"Move to Top Right" keyEquivalent: @"E" tag: Z_MOVE_TOP_RIGHT alternate: YES];
-	[menu addHotKeyItemWithTitle: @"Resize to Left" keyEquivalent: @"a" tag: Z_RESIZE_LEFT];
-	[menu addHotKeyItemWithTitle: @"Move to Left" keyEquivalent: @"A" tag: Z_MOVE_LEFT alternate: YES];
-	[menu addHotKeyItemWithTitle: @"Resize to Center" keyEquivalent: @"s" tag: Z_RESIZE_CENTER];
-	[menu addHotKeyItemWithTitle: @"Move to Center" keyEquivalent: @"S" tag: Z_MOVE_CENTER alternate: YES];
-	[menu addHotKeyItemWithTitle: @"Resize to Right" keyEquivalent: @"d" tag: Z_RESIZE_RIGHT];
-	[menu addHotKeyItemWithTitle: @"Move to Right" keyEquivalent: @"D" tag: Z_MOVE_RIGHT alternate: YES];
-	[menu addHotKeyItemWithTitle: @"Resize to Bottom Left" keyEquivalent: @"z" tag: Z_RESIZE_BOTTOM_LEFT];
-	[menu addHotKeyItemWithTitle: @"Move to Bottom Left" keyEquivalent: @"Z" tag: Z_MOVE_BOTTOM_LEFT alternate: YES];
-	[menu addHotKeyItemWithTitle: @"Resize to Bottom" keyEquivalent: @"x" tag: Z_RESIZE_BOTTOM];
-	[menu addHotKeyItemWithTitle: @"Move to Bottom" keyEquivalent: @"X" tag: Z_MOVE_BOTTOM alternate: YES];
-	[menu addHotKeyItemWithTitle: @"Resize to Bottom Right" keyEquivalent: @"c" tag: Z_RESIZE_BOTTOM_RIGHT];
-	[menu addHotKeyItemWithTitle: @"Move to Bottom Right" keyEquivalent: @"C" tag: Z_MOVE_BOTTOM_RIGHT alternate: YES];
-	[menu addItem: [NSMenuItem separatorItem]];
-	[menu addHotKeyItemWithTitle: @"Resize to Next Screen" keyEquivalent: @"\u21E5" tag: Z_RESIZE_NEXT_SCREEN];
-	NSMenuItem *moveNextScreenItem = [menu addHotKeyItemWithTitle: @"Move to Next Screen" keyEquivalent: @"\u21E5" tag: Z_MOVE_NEXT_SCREEN alternate: YES];
-	[moveNextScreenItem setKeyEquivalentModifierMask: NSCommandKeyMask | NSControlKeyMask | NSShiftKeyMask];
-	[menu addItem: [NSMenuItem separatorItem]];
 	[menu addItemWithTitle: @"Quit" action: @selector(terminate:) keyEquivalent: @""];
 	statusItem = [[[NSStatusBar systemStatusBar] statusItemWithLength: NSSquareStatusItemLength] retain];
 	[statusItem setTitle: @"Z"];
 	[statusItem setMenu: menu];
 	[statusItem setHighlightMode: YES];
-}
-
-- (void)handleHotKeyItem: (NSMenuItem *)aMenuItem {
-	ZHandleHotKey([aMenuItem tag]);
 }
 
 @end
