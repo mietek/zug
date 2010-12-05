@@ -6,6 +6,23 @@
 #import "ZAgent.h"
 
 
+int main() {
+	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+	NSApplication *app = [NSApplication sharedApplication];
+	if (!ZAmIAuthorized()) {
+		NSRunCriticalAlertPanel(@"ZAgent cannot run.", @"Please enable access for assistive devices in the Universal Access system preference pane.", @"OK", @"", @"");
+		return EXIT_FAILURE;
+	}
+	ZKeyEventState state;
+	memset(&state, 0, sizeof(state));
+	ZInstallKeyEventHandler(&ZHandleKeyEvent, &state);
+	[app setDelegate: [[[ZAgent alloc] init] autorelease]];
+	[app run];
+	[pool release];
+	return EXIT_SUCCESS;
+}
+
+
 @implementation ZAgent
 
 - (void)applicationDidFinishLaunching: (NSNotification *)aNotification {
@@ -210,21 +227,4 @@ Boolean ZAreFlagsResize(CGEventFlags flags) {
 
 Boolean ZAreFlagsMove(CGEventFlags flags) {
 	return flags & kCGEventFlagMaskSecondaryFn && !(flags & kCGEventFlagMaskControl) && flags & kCGEventFlagMaskShift;
-}
-
-
-int main() {
-	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-	NSApplication *app = [NSApplication sharedApplication];
-	if (!ZAmIAuthorized()) {
-		NSRunCriticalAlertPanel(@"ZAgent cannot run.", @"Please enable access for assistive devices in the Universal Access system preference pane.", @"OK", @"", @"");
-		return EXIT_FAILURE;
-	}
-	ZKeyEventState state;
-	memset(&state, 0, sizeof(state));
-	ZInstallKeyEventHandler(&ZHandleKeyEvent, &state);
-	[app setDelegate: [[[ZAgent alloc] init] autorelease]];
-	[app run];
-	[pool release];
-	return EXIT_SUCCESS;
 }
