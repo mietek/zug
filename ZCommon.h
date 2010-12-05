@@ -43,14 +43,12 @@ enum ZAction {
 typedef UInt32 ZAction;
 #define Z_ACTION_COUNT 3
 
-typedef void (*ZKeyEventHandler)(ZAction action, UInt32 anchorCount[Z_ANCHOR_COUNT], ZIndex displayIndex);
+typedef Boolean (*ZKeyEventHandler)(CGEventRef event, void *handlerData);
 
 typedef struct {
 	ZKeyEventHandler handler;
-	ZAction action;
-	UInt32 anchorCount[Z_ANCHOR_COUNT];
-	ZIndex displayIndex;
-} ZKeyEventState;
+	void *handlerData;
+} ZInternalKeyEventState;
 
 
 CGFloat ZGetMainDisplayHeight();
@@ -76,33 +74,5 @@ void ZSetWindowOrigin(AXUIElementRef win, CGPoint origin);
 void ZSetWindowSize(AXUIElementRef win, CGSize size);
 void ZSetWindowBounds(AXUIElementRef win, CGRect bounds);
 
-void ZInstallKeyEventHandler(ZKeyEventHandler handler);
-CGEventRef ZHandleInternalKeyEvent(CGEventTapProxy proxy, CGEventType type, CGEventRef event, ZKeyEventState *state);
-Boolean ZBeginAction(ZAction action, ZAnchor anchor, ZIndex displayIndex, ZKeyEventState *state);
-Boolean ZContinueAction(ZAnchor anchor, ZIndex displayIndex, ZKeyEventState *state);
-Boolean ZFinishAction(ZAction action, ZKeyEventState *state);
-
-ZAnchor ZKeycodeToAnchor(UInt32 keycode);
-Boolean ZIsKeycodeCenter(UInt32 keycode);
-Boolean ZIsKeycodeLeft(UInt32 keycode);
-Boolean ZIsKeycodeRight(UInt32 keycode);
-Boolean ZIsKeycodeTop(UInt32 keycode);
-Boolean ZIsKeycodeBottom(UInt32 keycode);
-Boolean ZIsKeycodeTopLeft(UInt32 keycode);
-Boolean ZIsKeycodeTopRight(UInt32 keycode);
-Boolean ZIsKeycodeBottomLeft(UInt32 keycode);
-Boolean ZIsKeycodeBottomRight(UInt32 keycode);
-ZIndex ZKeycodeToIndex(UInt32 keycode);
-Boolean ZIsKeycode1(UInt32 keycode);
-Boolean ZIsKeycode2(UInt32 keycode);
-Boolean ZIsKeycode3(UInt32 keycode);
-Boolean ZIsKeycode4(UInt32 keycode);
-Boolean ZIsKeycode5(UInt32 keycode);
-Boolean ZIsKeycode6(UInt32 keycode);
-Boolean ZIsKeycode7(UInt32 keycode);
-Boolean ZIsKeycode8(UInt32 keycode);
-Boolean ZIsKeycode9(UInt32 keycode);
-ZAction ZFlagsToAction(CGEventFlags flags);
-Boolean ZAreFlagsFocus(CGEventFlags flags);
-Boolean ZAreFlagsResize(CGEventFlags flags);
-Boolean ZAreFlagsMove(CGEventFlags flags);
+void ZInstallKeyEventHandler(ZKeyEventHandler handler, void *handlerData);
+CGEventRef ZHandleInternalKeyEvent(CGEventTapProxy proxy, CGEventType type, CGEventRef event, void *userData);
