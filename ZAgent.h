@@ -1,7 +1,7 @@
 typedef struct {
 	ZAction action;
-	UInt32 anchorCount[Z_ANCHOR_COUNT];
 	ZIndex screenIndex;
+	UInt32 anchorCount[Z_ANCHOR_COUNT];
 } ZKeyEventState;
 
 
@@ -12,6 +12,7 @@ typedef struct {
 @end
 
 
+void ZDoAction(ZAction action, ZIndex screenIndex, UInt32 anchorCount[Z_ANCHOR_COUNT]);
 Boolean ZHandleKeyEvent(CGEventRef event, void *handlerData);
 
 ZAnchor ZKeycodeToAnchor(UInt32 keycode);

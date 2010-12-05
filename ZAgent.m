@@ -15,8 +15,8 @@ int main() {
 	}
 	ZKeyEventState state;
 	state.action = Z_NO_ACTION;
-	memset(&state.anchorCount, 0, sizeof(state.anchorCount));
 	state.screenIndex = Z_NO_INDEX;
+	memset(&state.anchorCount, 0, sizeof(state.anchorCount));
 	ZInstallKeyEventHandler(&ZHandleKeyEvent, &state);
 	[app setDelegate: [[[ZAgent alloc] init] autorelease]];
 	[app run];
@@ -38,6 +38,10 @@ int main() {
 
 @end
 
+
+void ZDoAction(ZAction action, ZIndex screenIndex, UInt32 anchorCount[Z_ANCHOR_COUNT]) {
+	debugf("action: %d, anchorCount: %d, %d %d %d %d, %d %d %d %d, screenIndex: %d", action, anchorCount[Z_CENTER], anchorCount[Z_LEFT], anchorCount[Z_RIGHT], anchorCount[Z_TOP], anchorCount[Z_BOTTOM], anchorCount[Z_TOP_LEFT], anchorCount[Z_TOP_RIGHT], anchorCount[Z_BOTTOM_LEFT], anchorCount[Z_BOTTOM_RIGHT], screenIndex);
+}
 
 Boolean ZHandleKeyEvent(CGEventRef event, void *handlerData) {
 	ZKeyEventState *state = (ZKeyEventState *)handlerData;
@@ -86,7 +90,7 @@ Boolean ZHandleKeyEvent(CGEventRef event, void *handlerData) {
 	}
 	else if (type == kCGEventFlagsChanged) {
 		if (state->action != Z_NO_ACTION && action == Z_NO_ACTION) {
-			debugf("action: %d, anchorCount: %d, %d %d %d %d, %d %d %d %d, screenIndex: %d", state->action, state->anchorCount[Z_CENTER], state->anchorCount[Z_LEFT], state->anchorCount[Z_RIGHT], state->anchorCount[Z_TOP], state->anchorCount[Z_BOTTOM], state->anchorCount[Z_TOP_LEFT], state->anchorCount[Z_TOP_RIGHT], state->anchorCount[Z_BOTTOM_LEFT], state->anchorCount[Z_BOTTOM_RIGHT], state->screenIndex);
+			ZDoAction(state->action, state->screenIndex, state->anchorCount);
 			state->action = Z_NO_ACTION;
 			memset(state->anchorCount, 0, sizeof(state->anchorCount));
 			state->screenIndex = Z_NO_INDEX;
