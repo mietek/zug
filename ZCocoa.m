@@ -76,6 +76,13 @@
 	return bestScreen;
 }
 
++ (NSScreen *)screenWithIndex: (uint32_t)anIndex {
+	NSArray *screens = [NSScreen screens];
+	if (anIndex < 0 || anIndex >= [screens count])
+		return nil;
+	return [screens objectAtIndex: anIndex];
+}
+
 - (CGDirectDisplayID)displayID {
 	return (CGDirectDisplayID)[[[self deviceDescription] objectForKey: @"NSScreenNumber"] intValue];
 }

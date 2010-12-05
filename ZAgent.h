@@ -13,9 +13,6 @@ typedef struct {
 
 
 Boolean ZHandleKeyEvent(CGEventRef event, void *handlerData);
-Boolean ZBeginAction(ZAction action, ZAnchor anchor, ZIndex screenIndex, ZKeyEventState *state);
-Boolean ZContinueAction(ZAnchor anchor, ZIndex screenIndex, ZKeyEventState *state);
-Boolean ZFinishAction(ZAction action, ZKeyEventState *state);
 
 ZAnchor ZKeycodeToAnchor(UInt32 keycode);
 Boolean ZIsKeycodeCenter(UInt32 keycode);

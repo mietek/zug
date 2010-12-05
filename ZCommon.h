@@ -5,7 +5,7 @@
 
 
 enum ZAnchor {
-	Z_NO_ANCHOR = 0,
+	Z_NO_ANCHOR = -1,
 	Z_CENTER,
 	Z_LEFT,
 	Z_RIGHT,
@@ -20,7 +20,7 @@ typedef UInt32 ZAnchor;
 #define Z_ANCHOR_COUNT 9
 
 enum ZIndex {
-	Z_NO_INDEX = 0,
+	Z_NO_INDEX = -1,
 	Z_INDEX_1,
 	Z_INDEX_2,
 	Z_INDEX_3,
@@ -35,7 +35,7 @@ typedef UInt32 ZIndex;
 #define Z_INDEX_COUNT 9
 
 enum ZAction {
-	Z_NO_ACTION = 0,
+	Z_NO_ACTION = -1,
 	Z_FOCUS_ACTION,
 	Z_RESIZE_ACTION,
 	Z_MOVE_ACTION

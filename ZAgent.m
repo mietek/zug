@@ -14,7 +14,9 @@ int main() {
 		return EXIT_FAILURE;
 	}
 	ZKeyEventState state;
-	memset(&state, 0, sizeof(state));
+	state.action = Z_NO_ACTION;
+	memset(&state.anchorCount, 0, sizeof(state.anchorCount));
+	state.screenIndex = Z_NO_INDEX;
 	ZInstallKeyEventHandler(&ZHandleKeyEvent, &state);
 	[app setDelegate: [[[ZAgent alloc] init] autorelease]];
 	[app run];
@@ -39,53 +41,57 @@ int main() {
 
 Boolean ZHandleKeyEvent(CGEventRef event, void *handlerData) {
 	ZKeyEventState *state = (ZKeyEventState *)handlerData;
-	CGEventType type = CGEventGetType(event);
 	ZAction action = ZFlagsToAction(CGEventGetFlags(event));
+	CGEventType type = CGEventGetType(event);
 	if (type == kCGEventKeyDown) {
-		UInt32 keycode = CGEventGetIntegerValueField(event, kCGKeyboardEventKeycode);
-		ZAnchor anchor = ZKeycodeToAnchor(keycode);
-		ZIndex screenIndex = ZKeycodeToIndex(keycode);
-		if (ZBeginAction(action, anchor, screenIndex, state))
-			return true;
-		if (ZContinueAction(anchor, screenIndex, state))
-			return true;
+		if (state->action == Z_NO_ACTION) {
+			if (action != Z_NO_ACTION) {
+				UInt32 keycode = CGEventGetIntegerValueField(event, kCGKeyboardEventKeycode);
+				ZIndex screenIndex = ZKeycodeToIndex(keycode);
+				if (screenIndex != Z_NO_INDEX) {
+					if ([NSScreen screenWithIndex: screenIndex]) {
+						state->action = action;
+						state->screenIndex = screenIndex;
+					}
+					else
+						NSBeep();
+					return true;
+				}
+				ZAnchor anchor = ZKeycodeToAnchor(keycode);
+				if (anchor != Z_NO_ANCHOR) {
+					state->action = action;
+					state->anchorCount[anchor]++;
+					return true;
+				}
+			}
+		}
+		else {
+			if (action != Z_NO_ACTION) {
+				UInt32 keycode = CGEventGetIntegerValueField(event, kCGKeyboardEventKeycode);
+				ZIndex screenIndex = ZKeycodeToIndex(keycode);
+				if (screenIndex != Z_NO_INDEX) {
+					if ([NSScreen screenWithIndex: screenIndex])
+						state->screenIndex = screenIndex;
+					else
+						NSBeep();
+					return true;
+				}
+				ZAnchor anchor = ZKeycodeToAnchor(keycode);
+				if (anchor != Z_NO_ANCHOR) {
+					state->anchorCount[anchor]++;
+					return true;
+				}
+			}
+		}
 	}
 	else if (type == kCGEventFlagsChanged) {
-		if (ZFinishAction(action, state))
+		if (state->action != Z_NO_ACTION && action == Z_NO_ACTION) {
+			debugf("action: %d, anchorCount: %d, %d %d %d %d, %d %d %d %d, screenIndex: %d", state->action, state->anchorCount[Z_CENTER], state->anchorCount[Z_LEFT], state->anchorCount[Z_RIGHT], state->anchorCount[Z_TOP], state->anchorCount[Z_BOTTOM], state->anchorCount[Z_TOP_LEFT], state->anchorCount[Z_TOP_RIGHT], state->anchorCount[Z_BOTTOM_LEFT], state->anchorCount[Z_BOTTOM_RIGHT], state->screenIndex);
+			state->action = Z_NO_ACTION;
+			memset(state->anchorCount, 0, sizeof(state->anchorCount));
+			state->screenIndex = Z_NO_INDEX;
 			return true;
-	}
-	return false;
-}
-
-Boolean ZBeginAction(ZAction action, ZAnchor anchor, ZIndex screenIndex, ZKeyEventState *state) {
-	if (state->action == Z_NO_ACTION && action != Z_NO_ACTION && (anchor != Z_NO_ANCHOR || screenIndex != Z_NO_INDEX)) {
-		state->action = action;
-		if (ZContinueAction(anchor, screenIndex, state))
-			return true;
-		state->action = Z_NO_ACTION;
-	}
-	return false;
-}
-
-Boolean ZContinueAction(ZAnchor anchor, ZIndex screenIndex, ZKeyEventState *state) {
-	if (state->action != Z_NO_ACTION && (anchor != Z_NO_ANCHOR || screenIndex != Z_NO_INDEX)) {
-		if (anchor != Z_NO_ANCHOR)
-			state->anchorCount[anchor]++;
-		if (screenIndex != Z_NO_INDEX)
-			state->screenIndex = screenIndex;
-		return true;
-	}
-	return false;
-}
-
-Boolean ZFinishAction(ZAction action, ZKeyEventState *state) {
-	if (state->action != Z_NO_ACTION && action == Z_NO_ACTION) {
-		debug("woop");
-		// state->handler(state->action, state->anchorCount, state->screenIndex);
-		state->action = Z_NO_ACTION;
-		memset(state->anchorCount, 0, sizeof(state->anchorCount));
-		state->screenIndex = Z_NO_INDEX;
-		return true;
+		}
 	}
 	return false;
 }
