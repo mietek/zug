@@ -16,6 +16,7 @@ int main() {
 	ZKeyEventState state;
 	state.action = Z_NO_ACTION;
 	state.screenIndex = Z_NO_INDEX;
+	state.anchor = Z_NO_ANCHOR;
 	memset(&state.anchorCount, 0, sizeof(state.anchorCount));
 	ZInstallKeyEventHandler(&ZHandleKeyEvent, &state);
 	[app setDelegate: [[[ZAgent alloc] init] autorelease]];
@@ -39,14 +40,76 @@ int main() {
 @end
 
 
-void ZDoAction(ZAction action, ZIndex screenIndex, UInt32 anchorCount[Z_ANCHOR_COUNT]) {
-	debugf("action: %d, anchorCount: %d, %d %d %d %d, %d %d %d %d, screenIndex: %d", action, anchorCount[Z_CENTER], anchorCount[Z_LEFT], anchorCount[Z_RIGHT], anchorCount[Z_TOP], anchorCount[Z_BOTTOM], anchorCount[Z_TOP_LEFT], anchorCount[Z_TOP_RIGHT], anchorCount[Z_BOTTOM_LEFT], anchorCount[Z_BOTTOM_RIGHT], screenIndex);
+void ZDoAction(ZAction action, ZIndex screenIndex, ZAnchor anchor, UInt32 anchorCount[Z_ANCHOR_COUNT]) {
+	// debugf("action: %d, anchorCount: %d, %d %d %d %d, %d %d %d %d, screenIndex: %d", action, anchorCount[Z_CENTER], anchorCount[Z_LEFT], anchorCount[Z_RIGHT], anchorCount[Z_TOP], anchorCount[Z_BOTTOM], anchorCount[Z_TOP_LEFT], anchorCount[Z_TOP_RIGHT], anchorCount[Z_BOTTOM_LEFT], anchorCount[Z_BOTTOM_RIGHT], screenIndex);
+	AXUIElementRef win;
+	if (!(win = ZCopyFrontApplicationFrontWindow()))
+		return;
+	CGRect srcWinBounds = ZGetWindowBounds(win);
+	NSScreen *srcScreen;
+	if (!(srcScreen = [NSScreen screenWithRect: ZFlipRect(srcWinBounds)]))
+		halt("Error in ZHandleHotKey(): [NSScreen screenWithRect:] -> nil");
+	CGRect srcScreenBounds = ZFlipRect([srcScreen visibleFrame]);
+	NSScreen *dstScreen;
+	if (!(dstScreen = [NSScreen screenWithIndex: screenIndex]))
+		dstScreen = srcScreen;
+	CGRect dstScreenBounds = ZFlipRect([dstScreen visibleFrame]);
+	CGSize dstWinSize;
+	CGRect dstWinBounds;
+	if (anchor != Z_NO_ANCHOR) {
+		CGRect dstBaseBounds;
+		UInt32 dstBaseParts = anchorCount[Z_CENTER] + 1;
+		if (dstBaseParts <= 2) // Ugh, seems irregular
+			dstBaseBounds = dstScreenBounds;
+		else {
+			CGFloat dstBaseWidthRatio = 2.0 / dstBaseParts;
+			CGSize dstBaseSize = CGSizeMake(roundf(dstScreenBounds.size.width * dstBaseWidthRatio), dstScreenBounds.size.height);
+			dstBaseBounds = ZAnchorRect(Z_CENTER, dstBaseSize, dstScreenBounds);
+		}
+		UInt32 dstWinWidthParts = anchorCount[Z_LEFT] + anchorCount[Z_RIGHT] + anchorCount[Z_TOP_LEFT] + anchorCount[Z_TOP_RIGHT] + anchorCount[Z_BOTTOM_LEFT] + anchorCount[Z_BOTTOM_RIGHT] + 1;
+		if (dstWinWidthParts <= 1)
+			dstWinSize.width = dstBaseBounds.size.width;
+		else {
+			CGFloat dstWinWidthRatio = 1.0 / dstWinWidthParts;
+			dstWinSize.width = roundf(dstBaseBounds.size.width * dstWinWidthRatio);
+		}
+		UInt32 dstWinHeightParts = anchorCount[Z_TOP] + anchorCount[Z_BOTTOM] + anchorCount[Z_TOP_LEFT] + anchorCount[Z_TOP_RIGHT] + anchorCount[Z_BOTTOM_LEFT] + anchorCount[Z_BOTTOM_RIGHT] + 1;
+		if (dstWinHeightParts <= 1)
+			dstWinSize.height = dstBaseBounds.size.height;
+		else {
+			CGFloat dstWinHeightRatio = 1.0 / dstWinHeightParts;
+			dstWinSize.height = roundf(dstBaseBounds.size.height * dstWinHeightRatio);
+		}
+		UInt32 dstWinHorizPart = 0;
+		if (anchor == Z_LEFT || anchor == Z_TOP_LEFT || anchor == Z_BOTTOM_LEFT)
+			dstWinHorizPart = anchorCount[Z_RIGHT] + anchorCount[Z_TOP_RIGHT] + anchorCount[Z_BOTTOM_RIGHT];
+		else if (anchor == Z_RIGHT || anchor == Z_TOP_RIGHT || anchor == Z_BOTTOM_RIGHT)
+			dstWinHorizPart = anchorCount[Z_LEFT] + anchorCount[Z_TOP_LEFT] + anchorCount[Z_BOTTOM_LEFT];
+		UInt32 dstWinVertPart = 0;
+		if (anchor == Z_TOP || anchor == Z_TOP_LEFT || anchor == Z_TOP_RIGHT)
+			dstWinVertPart = anchorCount[Z_BOTTOM] + anchorCount[Z_BOTTOM_LEFT] + anchorCount[Z_BOTTOM_RIGHT];
+		else if (anchor == Z_BOTTOM || anchor == Z_BOTTOM_LEFT || anchor == Z_BOTTOM_RIGHT)
+			dstWinVertPart = anchorCount[Z_TOP] + anchorCount[Z_TOP_LEFT] + anchorCount[Z_TOP_RIGHT];
+		dstWinBounds = ZAnchorPartRect(anchor, dstWinSize, dstWinHorizPart, dstWinVertPart, dstBaseBounds);
+	}
+	else {
+		if (srcScreen == dstScreen)
+			return;
+		ZAnchor anchor = ZGuessAnchor(srcWinBounds, srcScreenBounds); // TODO: This should return Z_NO_ANCHOR and we should handle this by origin ratios
+		CGSize ratio = ZGuessRatio(srcWinBounds, srcScreenBounds);
+		dstWinSize = CGSizeMake(roundf(dstScreenBounds.size.width * ratio.width), roundf(dstScreenBounds.size.height * ratio.height));
+		dstWinBounds = ZAnchorRect(anchor, dstWinSize, dstScreenBounds);
+	}
+	ZSetWindowSize(win, dstWinBounds.size);
+	ZSetWindowOrigin(win, dstWinBounds.origin);
+	ZSetWindowSize(win, dstWinBounds.size); // Ugh, maybe use CGSPrivate instead
 }
 
 Boolean ZHandleKeyEvent(CGEventRef event, void *handlerData) {
 	ZKeyEventState *state = (ZKeyEventState *)handlerData;
 	ZAction action = ZFlagsToAction(CGEventGetFlags(event));
 	CGEventType type = CGEventGetType(event);
+	debugf("type: %d, flags: %d", type, CGEventGetFlags(event));
 	if (type == kCGEventKeyDown) {
 		if (state->action == Z_NO_ACTION) {
 			if (action != Z_NO_ACTION) {
@@ -64,6 +127,7 @@ Boolean ZHandleKeyEvent(CGEventRef event, void *handlerData) {
 				ZAnchor anchor = ZKeycodeToAnchor(keycode);
 				if (anchor != Z_NO_ANCHOR) {
 					state->action = action;
+					state->anchor = anchor;
 					state->anchorCount[anchor]++;
 					return true;
 				}
@@ -82,6 +146,8 @@ Boolean ZHandleKeyEvent(CGEventRef event, void *handlerData) {
 				}
 				ZAnchor anchor = ZKeycodeToAnchor(keycode);
 				if (anchor != Z_NO_ANCHOR) {
+					if (state->anchor == Z_CENTER) // Ugh, maybe use a separate field
+						state->anchor = anchor;
 					state->anchorCount[anchor]++;
 					return true;
 				}
@@ -90,8 +156,9 @@ Boolean ZHandleKeyEvent(CGEventRef event, void *handlerData) {
 	}
 	else if (type == kCGEventFlagsChanged) {
 		if (state->action != Z_NO_ACTION && action == Z_NO_ACTION) {
-			ZDoAction(state->action, state->screenIndex, state->anchorCount);
+			ZDoAction(state->action, state->screenIndex, state->anchor, state->anchorCount);
 			state->action = Z_NO_ACTION;
+			state->anchor = Z_NO_ANCHOR;
 			memset(state->anchorCount, 0, sizeof(state->anchorCount));
 			state->screenIndex = Z_NO_INDEX;
 			return true;

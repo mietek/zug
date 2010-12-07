@@ -56,8 +56,8 @@ CGRect ZFlipRect(CGRect rect);
 CGFloat ZGetRectArea(CGRect rect);
 CGSize ZGuessRatio(CGRect rect, CGRect bounds);
 ZAnchor ZGuessAnchor(CGRect rect, CGRect bounds);
-ZAnchor ZNormalizeAnchor(ZAnchor anchor);
 CGRect ZAnchorRect(ZAnchor anchor, CGSize size, CGRect bounds);
+CGRect ZAnchorPartRect(ZAnchor anchor, CGSize size, UInt32 horizPart, UInt32 vertPart, CGRect bounds);
 Boolean ZIsAnchorLeft(ZAnchor anchor);
 Boolean ZIsAnchorRight(ZAnchor anchor);
 Boolean ZIsAnchorTop(ZAnchor anchor);
@@ -72,7 +72,6 @@ CGSize ZGetWindowSize(AXUIElementRef win);
 CGRect ZGetWindowBounds(AXUIElementRef win);
 void ZSetWindowOrigin(AXUIElementRef win, CGPoint origin);
 void ZSetWindowSize(AXUIElementRef win, CGSize size);
-void ZSetWindowBounds(AXUIElementRef win, CGRect bounds);
 
 void ZInstallKeyEventHandler(ZKeyEventHandler handler, void *handlerData);
 CGEventRef ZHandleInternalKeyEvent(CGEventTapProxy proxy, CGEventType type, CGEventRef event, void *userData);
