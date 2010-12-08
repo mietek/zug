@@ -1,0 +1,63 @@
+========================================
+ZAGENT
+
+----------------------------------------
+PURPOSE
+
+Move and resize the frontmost window by pressing a key combination.
+
+----------------------------------------
+VERSION
+
+0.0
+Do not distribute.
+
+----------------------------------------
+AUTHOR
+
+Mietek Bak
+mietek@gmail.com
+
+
+========================================
+BASIC USAGE
+
+----------------------------------------
+KEY COMBINATION     EFFECT
+
+fn + S              Full screen
+fn + A              Left half
+fn + D              Right half
+fn + W              Top half
+fn + X              Bottom half
+fn + Q              Top left quarter
+fn + E              Top right quarter
+fn + Z              Bottom left quarter
+fn + C              Bottom right quarter
+fn + 1              Screen 1
+fn + 2              Screen 2
+...
+fn + 9              Screen 9
+
+
+========================================
+ADVANCED USAGE
+
+----------------------------------------
+KEY COMBINATION     EFFECT
+
+fn + S              2/2 horizontal, anchored center
+fn + S, S           2/3 horizontal, anchored center
+fn + S, S, S        2/4 horizontal, anchored center
+...
+
+fn + A              1/2 horizontal, anchored left
+fn + A, A           1/3 horizontal, anchored left, index 1
+fn + A, D           1/3 horizontal, anchored left, index 2
+fn + A, A, A        1/4 horizontal, anchored left, index 1
+fn + A, A, D        1/4 horizontal, anchored left, index 2
+fn + A, D, D        1/4 horizontal, anchored left, index 3
+...
+
+fn + 1, A           Screen 1, 1/2 horizontal, anchored left
+...
