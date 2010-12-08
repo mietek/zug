@@ -109,7 +109,6 @@ Boolean ZHandleKeyEvent(CGEventRef event, void *handlerData) {
 	ZKeyEventState *state = (ZKeyEventState *)handlerData;
 	ZAction action = ZFlagsToAction(CGEventGetFlags(event));
 	CGEventType type = CGEventGetType(event);
-	debugf("type: %d, flags: %d", type, CGEventGetFlags(event));
 	if (type == kCGEventKeyDown) {
 		if (state->action == Z_NO_ACTION) {
 			if (action != Z_NO_ACTION) {
@@ -146,7 +145,7 @@ Boolean ZHandleKeyEvent(CGEventRef event, void *handlerData) {
 				}
 				ZAnchor anchor = ZKeycodeToAnchor(keycode);
 				if (anchor != Z_NO_ANCHOR) {
-					if (state->anchor == Z_CENTER) // Ugh, maybe use a separate field
+					if (state->anchor == Z_NO_ANCHOR || state->anchor == Z_CENTER) // Ugh, maybe use a separate field
 						state->anchor = anchor;
 					state->anchorCount[anchor]++;
 					return true;
