@@ -195,12 +195,13 @@ void ZSetWindowSize(AXUIElementRef win, CGSize size) {
 
 
 void ZInstallKeyEventHandler(ZKeyEventHandler handler, void *handlerData) {
-	static ZInternalKeyEventState state;
+	static ZHandlerState state;
 	state.handler = handler;
 	state.handlerData = handlerData;
 	CFMachPortRef tap;
-	if (!(tap = CGEventTapCreate(kCGSessionEventTap, kCGHeadInsertEventTap, kCGEventTapOptionDefault, CGEventMaskBit(kCGEventKeyDown) | CGEventMaskBit(kCGEventFlagsChanged), &ZHandleInternalKeyEvent, &state)))
+	if (!(tap = CGEventTapCreate(kCGSessionEventTap, kCGHeadInsertEventTap, kCGEventTapOptionDefault, CGEventMaskBit(kCGEventKeyDown) | CGEventMaskBit(kCGEventFlagsChanged), &ZHandleEvent, &state)))
 		halt("Error in ZInstallKeyEventHandler(): CGEventTapCreate() -> NULL");
+	state.tap = tap;
 	CFRunLoopSourceRef source;
 	if (!(source = CFMachPortCreateRunLoopSource(NULL, tap, 0)))
 		halt("Error in ZInstallKeyEventHandler(): CFMachPortCreateRunLoopSource() -> NULL");
@@ -209,8 +210,18 @@ void ZInstallKeyEventHandler(ZKeyEventHandler handler, void *handlerData) {
 	CFRelease(source);
 }
 
-CGEventRef ZHandleInternalKeyEvent(CGEventTapProxy proxy, CGEventType type, CGEventRef event, void *userData) {
-	ZInternalKeyEventState *state = (ZInternalKeyEventState *)userData;
+CGEventRef ZHandleEvent(CGEventTapProxy proxy, CGEventType type, CGEventRef event, void *userData) {
+	ZHandlerState *state = (ZHandlerState *)userData;
+	if (type == kCGEventTapDisabledByTimeout) {
+		debug("Warning in ZHandleEvent(): type == kCGEventTapDisabledByTimeout");
+		CGEventTapEnable(state->tap, true);
+		return NULL;
+	}
+	if (type == kCGEventTapDisabledByUserInput) {
+		debug("Warning in ZHandleEvent(): type == kCGEventTapDisabledByUserInput");
+		CGEventTapEnable(state->tap, true);
+		return NULL;
+	}
 	if (state->handler(event, state->handlerData))
 		return NULL;
 	return event;

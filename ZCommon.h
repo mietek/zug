@@ -48,7 +48,8 @@ typedef Boolean (*ZKeyEventHandler)(CGEventRef event, void *handlerData);
 typedef struct {
 	ZKeyEventHandler handler;
 	void *handlerData;
-} ZInternalKeyEventState;
+	CFMachPortRef tap;
+} ZHandlerState;
 
 
 CGFloat ZGetMainDisplayHeight();
@@ -74,4 +75,4 @@ void ZSetWindowOrigin(AXUIElementRef win, CGPoint origin);
 void ZSetWindowSize(AXUIElementRef win, CGSize size);
 
 void ZInstallKeyEventHandler(ZKeyEventHandler handler, void *handlerData);
-CGEventRef ZHandleInternalKeyEvent(CGEventTapProxy proxy, CGEventType type, CGEventRef event, void *userData);
+CGEventRef ZHandleEvent(CGEventTapProxy proxy, CGEventType type, CGEventRef event, void *userData);
