@@ -118,6 +118,7 @@ Boolean ZHandleKeyEvent(CGEventRef event, void *handlerData) {
 					if ([NSScreen screenWithIndex: screenIndex]) {
 						state->action = action;
 						state->screenIndex = screenIndex;
+						ZDoAction(state->action, state->screenIndex, state->anchor, state->anchorCount);
 					}
 					else
 						NSBeep();
@@ -128,6 +129,7 @@ Boolean ZHandleKeyEvent(CGEventRef event, void *handlerData) {
 					state->action = action;
 					state->anchor = anchor;
 					state->anchorCount[anchor]++;
+					ZDoAction(state->action, state->screenIndex, state->anchor, state->anchorCount);
 					return true;
 				}
 			}
@@ -137,8 +139,10 @@ Boolean ZHandleKeyEvent(CGEventRef event, void *handlerData) {
 				UInt32 keycode = CGEventGetIntegerValueField(event, kCGKeyboardEventKeycode);
 				ZIndex screenIndex = ZKeycodeToIndex(keycode);
 				if (screenIndex != Z_NO_INDEX) {
-					if ([NSScreen screenWithIndex: screenIndex])
+					if ([NSScreen screenWithIndex: screenIndex]) {
 						state->screenIndex = screenIndex;
+						ZDoAction(state->action, state->screenIndex, state->anchor, state->anchorCount);
+					}
 					else
 						NSBeep();
 					return true;
@@ -148,6 +152,7 @@ Boolean ZHandleKeyEvent(CGEventRef event, void *handlerData) {
 					if (state->anchor == Z_NO_ANCHOR || state->anchor == Z_CENTER) // Ugh, maybe use a separate field
 						state->anchor = anchor;
 					state->anchorCount[anchor]++;
+					ZDoAction(state->action, state->screenIndex, state->anchor, state->anchorCount);
 					return true;
 				}
 			}
@@ -155,7 +160,6 @@ Boolean ZHandleKeyEvent(CGEventRef event, void *handlerData) {
 	}
 	else if (type == kCGEventFlagsChanged) {
 		if (state->action != Z_NO_ACTION && action == Z_NO_ACTION) {
-			ZDoAction(state->action, state->screenIndex, state->anchor, state->anchorCount);
 			state->action = Z_NO_ACTION;
 			state->anchor = Z_NO_ANCHOR;
 			memset(state->anchorCount, 0, sizeof(state->anchorCount));
