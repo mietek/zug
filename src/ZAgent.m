@@ -28,13 +28,15 @@ int main() {
 
 @implementation ZAgent
 
+@synthesize statusItem;
+
 - (void)applicationDidFinishLaunching: (NSNotification *)aNotification {
 	NSMenu *menu = [[[NSMenu allocWithZone: [NSMenu menuZone]] init] autorelease];
 	[menu addItemWithTitle: @"Quit" action: @selector(terminate:) keyEquivalent: @""];
-	statusItem = [[[NSStatusBar systemStatusBar] statusItemWithLength: NSSquareStatusItemLength] retain];
-	[statusItem setTitle: @"Z"];
-	[statusItem setMenu: menu];
-	[statusItem setHighlightMode: YES];
+	[self setStatusItem:[[NSStatusBar systemStatusBar] statusItemWithLength: NSSquareStatusItemLength]];
+	[[self statusItem] setTitle: @"Z"];
+	[[self statusItem] setMenu: menu];
+	[[self statusItem] setHighlightMode: YES];
 }
 
 @end
