@@ -1,13 +1,28 @@
-debug:
-	gcc -Wall -std=c99 -lobjc -framework Carbon -framework Cocoa -o bin/ZAgent src/ZCommon.c src/ZCocoa.m src/ZAgent.m
-	killall ZAgent || true
-	./bin/ZAgent
+app_name := ZAgent
 
-release:
-	gcc -Wall -O2 -std=c99 -lobjc -framework Carbon -framework Cocoa -arch ppc -arch i386 -arch x86_64 -DNS_BUILD_32_LIKE_64 -o bin/ZAgent src/ZCommon.c src/ZCocoa.m src/ZAgent.m
-	cp bin/ZAgent ZAgent/ZAgent.app/Contents/MacOS/
-	rm -f ZAgent.zip
-	zip -r ZAgent.zip ZAgent
-	scp ZAgent.zip varsztat:public_html
-	killall ZAgent || true
-	open ZAgent/ZAgent.app
+cc_flags := -O2 -Weverything -lobjc
+cc_frameworks := -framework Carbon -framework Cocoa
+
+
+all: build
+
+
+.PHONY: build clean test
+
+build: dist/$(app_name).app/Contents/Info.plist dist/$(app_name).app/Contents/PkgInfo dist/$(app_name).app/Contents/MacOS/$(app_name)
+
+clean:
+	rm -rf dist
+
+test: build
+	-killall $(app_name)
+	open dist/$(app_name).app
+
+
+dist/$(app_name).app/Contents/%: src/%
+	mkdir -p $(@D)
+	cp $< $@
+
+dist/$(app_name).app/Contents/MacOS/$(app_name): src/$(app_name).m src/$(app_name).h src/ZCocoa.m src/ZCocoa.h src/ZCommon.c src/ZCommon.h
+	mkdir -p $(@D)
+	cc $(cc_flags) $(cc_frameworks) -o $@ $(filter-out %.h,$^)
