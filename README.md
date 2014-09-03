@@ -29,14 +29,14 @@ While holding down `fn`, press one of the number keys to specify the screen:
 
 ### Advanced usage
 
-The combination continues as long as you hold down the `fn` key:
+The key combination continues as long as you hold down the `fn` key:
 
 -   `fn` + `A`           — Left, ½ width
 -   `fn` + `A`, `A`      — Left, ⅓ width
 -   `fn` + `A`, `A`, `A` — Left, ¼ width
 -   …
 
-The initial key pressed specifies the anchoring point and sets the initial window size.  The final window size is a fraction of the initial size, with the number of keys pressed specifying the denominator:
+The first key pressed specifies one of the nine anchoring points, and sets the initial window size.  The final window size is a fraction of the initial size, with the number of keys pressed specifying the denominator:
 
 -   `fn` + `W`           — Top, ½ height
 -   `fn` + `W`, `W`      — Top, ⅓ height
@@ -52,7 +52,7 @@ Mix and match keys to achieve different results:
 -   `fn` + `A`, `D`, `D` — Left, ¼ width, position 3
 -   …
 
-The `S` key is special, as it sets the initial window width to the full screen width:
+The `S` key is special, as it sets the initial window width to the width of the full screen:
 
 -   `fn` + `S`           — Centre, ½ + ½ width
 -   `fn` + `S`, `S`      — Centre, ½ + ⅓ width
