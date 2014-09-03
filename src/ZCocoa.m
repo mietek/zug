@@ -20,13 +20,12 @@
 
 + (NSScreen *)screenAfterScreen: (NSScreen *)aScreen {
 	NSArray *screens = [NSScreen screens];
-	NSUInteger screenCount = [screens count], screenIndex, i;
+	NSUInteger screenCount = [screens count], i;
 	if (screenCount == 1)
 		return nil;
 	for (i = 0; i < screenCount; i++) {
 		if ([[screens objectAtIndex: i] isScreen: aScreen]) {
-			screenIndex = (i + 1) % screenCount;
-			return [screens objectAtIndex: screenIndex];
+			return [screens objectAtIndex: (i + 1) % screenCount];
 		}
 	}
 	return nil;
@@ -34,14 +33,12 @@
 
 + (NSScreen *)screenBeforeScreen: (NSScreen *)aScreen {
 	NSArray *screens = [NSScreen screens];
-	NSUInteger screenCount = [screens count], screenIndex, i;
+	NSUInteger screenCount = [screens count], i;
 	if (screenCount == 1)
 		return nil;
 	for (i = 0; i < screenCount; i++) {
 		if ([[screens objectAtIndex: i] isScreen: aScreen]) {
-			if ((screenIndex = i - 1) < 0)
-				screenIndex += screenCount;
-			return [screens objectAtIndex: screenIndex];
+			return [screens objectAtIndex: i ? i - 1 : screenCount - 1];
 		}
 	}
 	return nil;
@@ -78,7 +75,7 @@
 
 + (NSScreen *)screenWithIndex: (NSUInteger)anIndex {
 	NSArray *screens = [NSScreen screens];
-	if (anIndex < 0 || anIndex >= [screens count])
+	if (anIndex >= [screens count])
 		return nil;
 	return [screens objectAtIndex: anIndex];
 }
