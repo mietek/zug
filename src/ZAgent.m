@@ -6,7 +6,8 @@
 #import "ZAgent.h"
 
 
-int main() {
+int main(int argc, char **argv) {
+	(void)argc, (void)argv;
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	NSApplication *app = [NSApplication sharedApplication];
 	if (!ZAmIAuthorized()) {

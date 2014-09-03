@@ -52,7 +52,7 @@ typedef struct {
 } ZHandlerState;
 
 
-CGFloat ZGetMainDisplayHeight();
+CGFloat ZGetMainDisplayHeight(void);
 CGRect ZFlipRect(CGRect rect);
 CGFloat ZGetRectArea(CGRect rect);
 CGSize ZGuessRatio(CGRect rect, CGRect bounds);
@@ -64,10 +64,10 @@ Boolean ZIsAnchorRight(ZAnchor anchor);
 Boolean ZIsAnchorTop(ZAnchor anchor);
 Boolean ZIsAnchorBottom(ZAnchor anchor);
 
-bool ZAmIAuthorized();
-AXUIElementRef ZCreateFrontApplication();
+bool ZAmIAuthorized(void);
+AXUIElementRef ZCreateFrontApplication(void);
 AXUIElementRef ZCopyFrontWindow(AXUIElementRef frontApp);
-AXUIElementRef ZCopyFrontApplicationFrontWindow();
+AXUIElementRef ZCopyFrontApplicationFrontWindow(void);
 CGPoint ZGetWindowOrigin(AXUIElementRef win);
 CGSize ZGetWindowSize(AXUIElementRef win);
 CGRect ZGetWindowBounds(AXUIElementRef win);

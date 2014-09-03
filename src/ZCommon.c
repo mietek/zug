@@ -5,7 +5,7 @@
 #define Z_SNAP_DISTANCE 8
 
 
-CGFloat ZGetMainDisplayHeight() {
+CGFloat ZGetMainDisplayHeight(void) {
 	return CGDisplayBounds(CGMainDisplayID()).size.height;
 }
 
@@ -101,7 +101,7 @@ CGRect ZAnchorPartRect(ZAnchor anchor, CGSize size, UInt32 horizPart, UInt32 ver
 }
 
 
-bool ZAmIAuthorized() {
+bool ZAmIAuthorized(void) {
 	if (AXAPIEnabled())
 		return true;
 	if (AXIsProcessTrusted())
@@ -110,7 +110,7 @@ bool ZAmIAuthorized() {
 	return false;
 }
 
-AXUIElementRef ZCreateFrontApplication() {
+AXUIElementRef ZCreateFrontApplication(void) {
 	OSErr err1;
 	ProcessSerialNumber psn;
 	if ((err1 = GetFrontProcess(&psn)))
@@ -135,7 +135,7 @@ AXUIElementRef ZCopyFrontWindow(AXUIElementRef frontApp) {
 	return frontWin;
 }
 
-AXUIElementRef ZCopyFrontApplicationFrontWindow() {
+AXUIElementRef ZCopyFrontApplicationFrontWindow(void) {
 	AXUIElementRef frontApp = ZCreateFrontApplication();
 	AXUIElementRef frontWin = ZCopyFrontWindow(frontApp);
 	CFRelease(frontApp);
