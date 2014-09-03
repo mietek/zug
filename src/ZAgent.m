@@ -34,7 +34,8 @@ int main(int argc, char **argv) {
 - (void)applicationDidFinishLaunching: (NSNotification *)aNotification {
 	(void)aNotification;
 	NSMenu *menu = [[[NSMenu allocWithZone: [NSMenu menuZone]] init] autorelease];
-	[menu addItemWithTitle: @"Quit" action: @selector(terminate:) keyEquivalent: @""];
+	SEL terminate = NSSelectorFromString(@"terminate:");
+	[menu addItemWithTitle: @"Quit" action: terminate keyEquivalent: @""];
 	[self setStatusItem:[[NSStatusBar systemStatusBar] statusItemWithLength: NSSquareStatusItemLength]];
 	[[self statusItem] setTitle: @"Z"];
 	[[self statusItem] setMenu: menu];
