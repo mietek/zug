@@ -26,16 +26,16 @@ CGSize ZGuessRatio(CGRect rect, CGRect bounds) {
 
 ZAnchor ZGuessAnchor(CGRect rect, CGRect bounds) {
 	Boolean left = false;
-	if (abs(rect.origin.x - bounds.origin.x) <= Z_SNAP_DISTANCE)
+	if (abs(lround(rect.origin.x - bounds.origin.x)) <= Z_SNAP_DISTANCE)
 		left = true;
 	Boolean right = false;
-	if (abs((rect.origin.x + rect.size.width) - (bounds.origin.x + bounds.size.width)) <= Z_SNAP_DISTANCE)
+	if (abs(lround((rect.origin.x + rect.size.width)) - lround(bounds.origin.x + bounds.size.width)) <= Z_SNAP_DISTANCE)
 		right = true;
 	Boolean top = false;
-	if (abs(rect.origin.y - bounds.origin.y) <= Z_SNAP_DISTANCE)
+	if (abs(lround(rect.origin.y - bounds.origin.y)) <= Z_SNAP_DISTANCE)
 		top = true;
 	Boolean bottom = false;
-	if (abs((rect.origin.y + rect.size.height) - (bounds.origin.y + bounds.size.height)) <= Z_SNAP_DISTANCE)
+	if (abs(lround((rect.origin.y + rect.size.height) - lround(bounds.origin.y + bounds.size.height))) <= Z_SNAP_DISTANCE)
 		bottom = true;
 	if (left && right)
 		left = right = false;
@@ -70,13 +70,13 @@ CGRect ZAnchorRect(ZAnchor anchor, CGSize size, CGRect bounds) {
 	else if (anchor == Z_RIGHT || anchor == Z_TOP_RIGHT || anchor == Z_BOTTOM_RIGHT)
 		rect.origin.x = bounds.origin.x + bounds.size.width - size.width;
 	else
-		rect.origin.x = roundf(bounds.origin.x + (bounds.size.width - size.width) / 2);
+		rect.origin.x = round(bounds.origin.x + (bounds.size.width - size.width) / 2);
 	if (anchor == Z_TOP || anchor == Z_TOP_LEFT || anchor == Z_TOP_RIGHT)
 		rect.origin.y = bounds.origin.y;
 	else if (anchor == Z_BOTTOM || anchor == Z_BOTTOM_LEFT || anchor == Z_BOTTOM_RIGHT)
 		rect.origin.y = bounds.origin.y + bounds.size.height - size.height;
 	else
-		rect.origin.y = roundf(bounds.origin.y + (bounds.size.height - size.height) / 2);
+		rect.origin.y = round(bounds.origin.y + (bounds.size.height - size.height) / 2);
 	return rect;
 }
 
@@ -90,13 +90,13 @@ CGRect ZAnchorPartRect(ZAnchor anchor, CGSize size, UInt32 horizPart, UInt32 ver
 	else if (anchor == Z_RIGHT || anchor == Z_TOP_RIGHT || anchor == Z_BOTTOM_RIGHT)
 		rect.origin.x = bounds.origin.x + bounds.size.width - (horizPart + 1) * size.width;
 	else
-		rect.origin.x = roundf(bounds.origin.x + (bounds.size.width - (horizPart + 1) * size.width) / 2);
+		rect.origin.x = round(bounds.origin.x + (bounds.size.width - (horizPart + 1) * size.width) / 2);
 	if (anchor == Z_TOP || anchor == Z_TOP_LEFT || anchor == Z_TOP_RIGHT)
 		rect.origin.y = bounds.origin.y + vertPart * size.height;
 	else if (anchor == Z_BOTTOM || anchor == Z_BOTTOM_LEFT || anchor == Z_BOTTOM_RIGHT)
 		rect.origin.y = bounds.origin.y + bounds.size.height - (vertPart + 1) * size.height;
 	else
-		rect.origin.y = roundf(bounds.origin.y + (bounds.size.height - (vertPart + 1) * size.height) / 2);
+		rect.origin.y = round(bounds.origin.y + (bounds.size.height - (vertPart + 1) * size.height) / 2);
 	return rect;
 }
 

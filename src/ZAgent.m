@@ -67,7 +67,7 @@ void ZDoAction(ZAction action, ZIndex screenIndex, ZAnchor anchor, UInt32 anchor
 			dstBaseBounds = dstScreenBounds;
 		else {
 			CGFloat dstBaseWidthRatio = 2.0 / dstBaseParts;
-			CGSize dstBaseSize = CGSizeMake(roundf(dstScreenBounds.size.width * dstBaseWidthRatio), dstScreenBounds.size.height);
+			CGSize dstBaseSize = CGSizeMake(round(dstScreenBounds.size.width * dstBaseWidthRatio), dstScreenBounds.size.height);
 			dstBaseBounds = ZAnchorRect(Z_CENTER, dstBaseSize, dstScreenBounds);
 		}
 		UInt32 dstWinWidthParts = anchorCount[Z_LEFT] + anchorCount[Z_RIGHT] + anchorCount[Z_TOP_LEFT] + anchorCount[Z_TOP_RIGHT] + anchorCount[Z_BOTTOM_LEFT] + anchorCount[Z_BOTTOM_RIGHT] + 1;
@@ -75,14 +75,14 @@ void ZDoAction(ZAction action, ZIndex screenIndex, ZAnchor anchor, UInt32 anchor
 			dstWinSize.width = dstBaseBounds.size.width;
 		else {
 			CGFloat dstWinWidthRatio = 1.0 / dstWinWidthParts;
-			dstWinSize.width = roundf(dstBaseBounds.size.width * dstWinWidthRatio);
+			dstWinSize.width = round(dstBaseBounds.size.width * dstWinWidthRatio);
 		}
 		UInt32 dstWinHeightParts = anchorCount[Z_TOP] + anchorCount[Z_BOTTOM] + anchorCount[Z_TOP_LEFT] + anchorCount[Z_TOP_RIGHT] + anchorCount[Z_BOTTOM_LEFT] + anchorCount[Z_BOTTOM_RIGHT] + 1;
 		if (dstWinHeightParts <= 1)
 			dstWinSize.height = dstBaseBounds.size.height;
 		else {
 			CGFloat dstWinHeightRatio = 1.0 / dstWinHeightParts;
-			dstWinSize.height = roundf(dstBaseBounds.size.height * dstWinHeightRatio);
+			dstWinSize.height = round(dstBaseBounds.size.height * dstWinHeightRatio);
 		}
 		UInt32 dstWinHorizPart = 0;
 		if (anchor == Z_LEFT || anchor == Z_TOP_LEFT || anchor == Z_BOTTOM_LEFT)
@@ -101,7 +101,7 @@ void ZDoAction(ZAction action, ZIndex screenIndex, ZAnchor anchor, UInt32 anchor
 			return;
 		ZAnchor anchor = ZGuessAnchor(srcWinBounds, srcScreenBounds); // TODO: This should return Z_NO_ANCHOR and we should handle this by origin ratios
 		CGSize ratio = ZGuessRatio(srcWinBounds, srcScreenBounds);
-		dstWinSize = CGSizeMake(roundf(dstScreenBounds.size.width * ratio.width), roundf(dstScreenBounds.size.height * ratio.height));
+		dstWinSize = CGSizeMake(round(dstScreenBounds.size.width * ratio.width), round(dstScreenBounds.size.height * ratio.height));
 		dstWinBounds = ZAnchorRect(anchor, dstWinSize, dstScreenBounds);
 	}
 	ZSetWindowSize(win, dstWinBounds.size);
