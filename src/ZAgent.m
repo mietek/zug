@@ -31,6 +31,7 @@ int main() {
 @synthesize statusItem;
 
 - (void)applicationDidFinishLaunching: (NSNotification *)aNotification {
+	(void)aNotification;
 	NSMenu *menu = [[[NSMenu allocWithZone: [NSMenu menuZone]] init] autorelease];
 	[menu addItemWithTitle: @"Quit" action: @selector(terminate:) keyEquivalent: @""];
 	[self setStatusItem:[[NSStatusBar systemStatusBar] statusItemWithLength: NSSquareStatusItemLength]];
@@ -43,6 +44,7 @@ int main() {
 
 
 void ZDoAction(ZAction action, ZIndex screenIndex, ZAnchor anchor, UInt32 anchorCount[Z_ANCHOR_COUNT]) {
+	(void)action;
 	// debugf("action: %d, anchorCount: %d, %d %d %d %d, %d %d %d %d, screenIndex: %d", action, anchorCount[Z_CENTER], anchorCount[Z_LEFT], anchorCount[Z_RIGHT], anchorCount[Z_TOP], anchorCount[Z_BOTTOM], anchorCount[Z_TOP_LEFT], anchorCount[Z_TOP_RIGHT], anchorCount[Z_BOTTOM_LEFT], anchorCount[Z_BOTTOM_RIGHT], screenIndex);
 	AXUIElementRef win;
 	if (!(win = ZCopyFrontApplicationFrontWindow()))

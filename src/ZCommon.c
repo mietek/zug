@@ -211,6 +211,7 @@ void ZInstallKeyEventHandler(ZKeyEventHandler handler, void *handlerData) {
 }
 
 CGEventRef ZHandleEvent(CGEventTapProxy proxy, CGEventType type, CGEventRef event, void *userData) {
+	(void)proxy;
 	ZHandlerState *state = (ZHandlerState *)userData;
 	if (type == kCGEventTapDisabledByTimeout) {
 		debug("Warning in ZHandleEvent(): type == kCGEventTapDisabledByTimeout");
