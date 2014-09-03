@@ -19,7 +19,7 @@ int main() {
 	state.anchor = Z_NO_ANCHOR;
 	memset(&state.anchorCount, 0, sizeof(state.anchorCount));
 	ZInstallKeyEventHandler(&ZHandleKeyEvent, &state);
-	[app setDelegate: [[[ZAgent alloc] init] autorelease]];
+	[app setDelegate: (id)[[[ZAgent alloc] init] autorelease]];
 	[app run];
 	[pool release];
 	return EXIT_SUCCESS;
