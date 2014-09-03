@@ -100,7 +100,7 @@ void ZDoAction(ZAction action, ZIndex screenIndex, ZAnchor anchor, UInt32 anchor
 	else {
 		if (srcScreen == dstScreen)
 			return;
-		ZAnchor anchor = ZGuessAnchor(srcWinBounds, srcScreenBounds); // TODO: This should return Z_NO_ANCHOR and we should handle this by origin ratios
+		anchor = ZGuessAnchor(srcWinBounds, srcScreenBounds); // TODO: This should return Z_NO_ANCHOR and we should handle this by origin ratios
 		CGSize ratio = ZGuessRatio(srcWinBounds, srcScreenBounds);
 		dstWinSize = CGSizeMake(round(dstScreenBounds.size.width * ratio.width), round(dstScreenBounds.size.height * ratio.height));
 		dstWinBounds = ZAnchorRect(anchor, dstWinSize, dstScreenBounds);
