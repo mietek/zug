@@ -1,4 +1,6 @@
 app_name := ZAgent
+app_dir  := dist/$(app_name).app/Contents
+bin_dir  := $(app_dir)/MacOS
 
 cc_flags := -O2 -Weverything -lobjc
 cc_frameworks := -framework Carbon -framework Cocoa
@@ -9,7 +11,7 @@ all: build
 
 .PHONY: build clean test
 
-build: dist/$(app_name).app/Contents/Info.plist dist/$(app_name).app/Contents/PkgInfo dist/$(app_name).app/Contents/MacOS/$(app_name)
+build: $(app_dir)/Info.plist $(app_dir)/PkgInfo $(bin_dir)/$(app_name)
 
 clean:
 	rm -rf dist
@@ -19,10 +21,14 @@ test: build
 	open dist/$(app_name).app
 
 
-dist/$(app_name).app/Contents/%: src/%
-	mkdir -p $(@D)
+$(app_dir):
+	mkdir -p $(app_dir)
+
+$(app_dir)/%: src/% | $(app_dir)
 	cp $< $@
 
-dist/$(app_name).app/Contents/MacOS/$(app_name): src/$(app_name).m src/$(app_name).h src/ZCocoa.m src/ZCocoa.h src/ZCommon.c src/ZCommon.h
-	mkdir -p $(@D)
+$(bin_dir):
+	mkdir -p $(bin_dir)
+
+$(bin_dir)/$(app_name): src/*.c src/*.m src/*.h | $(bin_dir)
 	cc $(cc_flags) $(cc_frameworks) -o $@ $(filter-out %.h,$^)
