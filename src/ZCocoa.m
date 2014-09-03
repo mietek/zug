@@ -76,7 +76,7 @@
 	return bestScreen;
 }
 
-+ (NSScreen *)screenWithIndex: (uint32_t)anIndex {
++ (NSScreen *)screenWithIndex: (NSUInteger)anIndex {
 	NSArray *screens = [NSScreen screens];
 	if (anIndex < 0 || anIndex >= [screens count])
 		return nil;

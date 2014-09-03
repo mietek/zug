@@ -4,9 +4,9 @@
 #define haltf(str, ...) do { debugf(str, __VA_ARGS__); exit(EXIT_FAILURE); } while (0)
 
 
-enum ZAnchor {
-	Z_NO_ANCHOR = -1,
-	Z_CENTER,
+typedef enum {
+	Z_NO_ANCHOR = 0x7FFFFFFF,
+	Z_CENTER = 0,
 	Z_LEFT,
 	Z_RIGHT,
 	Z_TOP,
@@ -15,13 +15,13 @@ enum ZAnchor {
 	Z_TOP_RIGHT,
 	Z_BOTTOM_LEFT,
 	Z_BOTTOM_RIGHT
-};
-typedef UInt32 ZAnchor;
+} ZAnchor;
+
 #define Z_ANCHOR_COUNT 9
 
-enum ZIndex {
-	Z_NO_INDEX = -1,
-	Z_INDEX_1,
+typedef enum {
+	Z_NO_INDEX = 0x7FFFFFFF,
+	Z_INDEX_1 = 0,
 	Z_INDEX_2,
 	Z_INDEX_3,
 	Z_INDEX_4,
@@ -30,17 +30,17 @@ enum ZIndex {
 	Z_INDEX_7,
 	Z_INDEX_8,
 	Z_INDEX_9
-};
-typedef UInt32 ZIndex;
+} ZIndex;
+
 #define Z_INDEX_COUNT 9
 
-enum ZAction {
-	Z_NO_ACTION = -1,
-	Z_FOCUS_ACTION,
+typedef enum {
+	Z_NO_ACTION = 0x7FFFFFFF,
+	Z_FOCUS_ACTION = 0,
 	Z_RESIZE_ACTION,
 	Z_MOVE_ACTION
-};
-typedef UInt32 ZAction;
+} ZAction;
+
 #define Z_ACTION_COUNT 3
 
 typedef Boolean (*ZKeyEventHandler)(CGEventRef event, void *handlerData);
