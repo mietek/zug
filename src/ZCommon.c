@@ -26,16 +26,16 @@ CGSize ZGuessRatio(CGRect rect, CGRect bounds) {
 
 ZAnchor ZGuessAnchor(CGRect rect, CGRect bounds) {
 	Boolean left = false;
-	if (abs(lround(rect.origin.x - bounds.origin.x)) <= Z_SNAP_DISTANCE)
+	if (labs(lround(rect.origin.x - bounds.origin.x)) <= Z_SNAP_DISTANCE)
 		left = true;
 	Boolean right = false;
-	if (abs(lround((rect.origin.x + rect.size.width)) - lround(bounds.origin.x + bounds.size.width)) <= Z_SNAP_DISTANCE)
+	if (labs(lround((rect.origin.x + rect.size.width)) - lround(bounds.origin.x + bounds.size.width)) <= Z_SNAP_DISTANCE)
 		right = true;
 	Boolean top = false;
-	if (abs(lround(rect.origin.y - bounds.origin.y)) <= Z_SNAP_DISTANCE)
+	if (labs(lround(rect.origin.y - bounds.origin.y)) <= Z_SNAP_DISTANCE)
 		top = true;
 	Boolean bottom = false;
-	if (abs(lround((rect.origin.y + rect.size.height) - lround(bounds.origin.y + bounds.size.height))) <= Z_SNAP_DISTANCE)
+	if (labs(lround((rect.origin.y + rect.size.height) - lround(bounds.origin.y + bounds.size.height))) <= Z_SNAP_DISTANCE)
 		bottom = true;
 	if (left && right)
 		left = right = false;

@@ -117,7 +117,7 @@ Boolean ZHandleKeyEvent(CGEventRef event, void *handlerData) {
 	if (type == kCGEventKeyDown) {
 		if (state->action == Z_NO_ACTION) {
 			if (action != Z_NO_ACTION) {
-				UInt32 keycode = CGEventGetIntegerValueField(event, kCGKeyboardEventKeycode);
+				int64_t keycode = CGEventGetIntegerValueField(event, kCGKeyboardEventKeycode);
 				ZIndex screenIndex = ZKeycodeToIndex(keycode);
 				if (screenIndex != Z_NO_INDEX) {
 					if ([NSScreen screenWithIndex: screenIndex]) {
@@ -141,7 +141,7 @@ Boolean ZHandleKeyEvent(CGEventRef event, void *handlerData) {
 		}
 		else {
 			if (action != Z_NO_ACTION) {
-				UInt32 keycode = CGEventGetIntegerValueField(event, kCGKeyboardEventKeycode);
+				int64_t keycode = CGEventGetIntegerValueField(event, kCGKeyboardEventKeycode);
 				ZIndex screenIndex = ZKeycodeToIndex(keycode);
 				if (screenIndex != Z_NO_INDEX) {
 					if ([NSScreen screenWithIndex: screenIndex]) {
@@ -176,7 +176,7 @@ Boolean ZHandleKeyEvent(CGEventRef event, void *handlerData) {
 }
 
 
-ZAnchor ZKeycodeToAnchor(UInt32 keycode) {
+ZAnchor ZKeycodeToAnchor(int64_t keycode) {
 	if (ZIsKeycodeCenter(keycode))
 		return Z_CENTER;
 	if (ZIsKeycodeLeft(keycode))
@@ -198,43 +198,43 @@ ZAnchor ZKeycodeToAnchor(UInt32 keycode) {
 	return Z_NO_ANCHOR;
 }
 
-Boolean ZIsKeycodeCenter(UInt32 keycode) {
+Boolean ZIsKeycodeCenter(int64_t keycode) {
 	return keycode == kVK_ANSI_S;
 }
 
-Boolean ZIsKeycodeLeft(UInt32 keycode) {
+Boolean ZIsKeycodeLeft(int64_t keycode) {
 	return keycode == kVK_ANSI_A;
 }
 
-Boolean ZIsKeycodeRight(UInt32 keycode) {
+Boolean ZIsKeycodeRight(int64_t keycode) {
 	return keycode == kVK_ANSI_D;
 }
 
-Boolean ZIsKeycodeTop(UInt32 keycode) {
+Boolean ZIsKeycodeTop(int64_t keycode) {
 	return keycode == kVK_ANSI_W;
 }
 
-Boolean ZIsKeycodeBottom(UInt32 keycode) {
+Boolean ZIsKeycodeBottom(int64_t keycode) {
 	return keycode == kVK_ANSI_X;
 }
 
-Boolean ZIsKeycodeTopLeft(UInt32 keycode) {
+Boolean ZIsKeycodeTopLeft(int64_t keycode) {
 	return keycode == kVK_ANSI_Q;
 }
 
-Boolean ZIsKeycodeTopRight(UInt32 keycode) {
+Boolean ZIsKeycodeTopRight(int64_t keycode) {
 	return keycode == kVK_ANSI_E;
 }
 
-Boolean ZIsKeycodeBottomLeft(UInt32 keycode) {
+Boolean ZIsKeycodeBottomLeft(int64_t keycode) {
 	return keycode == kVK_ANSI_Z;
 }
 
-Boolean ZIsKeycodeBottomRight(UInt32 keycode) {
+Boolean ZIsKeycodeBottomRight(int64_t keycode) {
 	return keycode == kVK_ANSI_C;
 }
 
-ZIndex ZKeycodeToIndex(UInt32 keycode) {
+ZIndex ZKeycodeToIndex(int64_t keycode) {
 	if (ZIsKeycode1(keycode))
 		return Z_INDEX_1;
 	if (ZIsKeycode2(keycode))
@@ -256,39 +256,39 @@ ZIndex ZKeycodeToIndex(UInt32 keycode) {
 	return Z_NO_INDEX;
 }
 
-Boolean ZIsKeycode1(UInt32 keycode) {
+Boolean ZIsKeycode1(int64_t keycode) {
 	return keycode == kVK_ANSI_1;
 }
 
-Boolean ZIsKeycode2(UInt32 keycode) {
+Boolean ZIsKeycode2(int64_t keycode) {
 	return keycode == kVK_ANSI_2;
 }
 
-Boolean ZIsKeycode3(UInt32 keycode) {
+Boolean ZIsKeycode3(int64_t keycode) {
 	return keycode == kVK_ANSI_3;
 }
 
-Boolean ZIsKeycode4(UInt32 keycode) {
+Boolean ZIsKeycode4(int64_t keycode) {
 	return keycode == kVK_ANSI_4;
 }
 
-Boolean ZIsKeycode5(UInt32 keycode) {
+Boolean ZIsKeycode5(int64_t keycode) {
 	return keycode == kVK_ANSI_5;
 }
 
-Boolean ZIsKeycode6(UInt32 keycode) {
+Boolean ZIsKeycode6(int64_t keycode) {
 	return keycode == kVK_ANSI_6;
 }
 
-Boolean ZIsKeycode7(UInt32 keycode) {
+Boolean ZIsKeycode7(int64_t keycode) {
 	return keycode == kVK_ANSI_7;
 }
 
-Boolean ZIsKeycode8(UInt32 keycode) {
+Boolean ZIsKeycode8(int64_t keycode) {
 	return keycode == kVK_ANSI_8;
 }
 
-Boolean ZIsKeycode9(UInt32 keycode) {
+Boolean ZIsKeycode9(int64_t keycode) {
 	return keycode == kVK_ANSI_9;
 }
 
