@@ -50,24 +50,25 @@
 	uint32_t displayIDCount;
 	if ((err = CGGetDisplaysWithRect(ZFlipRect(aRect), Z_MAX_DISPLAYS, displayIDs, &displayIDCount)))
 		haltf("Error in [NSScreen screenWithRect:]: CGGetDisplaysWithRect() -> %d", err);
-	uint32_t screenCount = 0, i;
-	NSScreen *screens[displayIDCount];
+	NSMutableArray *screens = [NSMutableArray arrayWithCapacity:displayIDCount];
+	uint32_t i;
 	for (i = 0; i < displayIDCount; i++) {
 		if (CGDisplayIsActive(displayIDs[i])) {
-			if (!(screens[screenCount] = [NSScreen screenWithDisplayID: displayIDs[i]]))
+			NSScreen *screen;
+			if (!(screen = [NSScreen screenWithDisplayID: displayIDs[i]]))
 				halt("Error in [NSScreen screenWithRect:]: [NSScreen screenWithDisplay:] -> nil");
-			screenCount++;
+			[screens addObject:screen];
 		}
 		else
 			debug("Warning in [NSScreen screenWithRect:]: CGDisplayIsActive() -> false");
 	}
 	NSScreen *bestScreen = nil;
 	CGFloat bestArea = 0, area;
-	for (i = 0; i < screenCount; i++) {
-		area = ZGetRectArea(NSIntersectionRect(aRect, [screens[i] frame]));
+	for (i = 0; i < [screens count]; i++) {
+		area = ZGetRectArea(NSIntersectionRect(aRect, [[screens objectAtIndex:i] frame]));
 		if (area > bestArea) {
 			bestArea = area;
-			bestScreen = screens[i];
+			bestScreen = [screens objectAtIndex:i];
 		}
 	}
 	return bestScreen;
