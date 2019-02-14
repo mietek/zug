@@ -63,4 +63,4 @@ The `S` key is special, as it sets the initial window width to the width of the 
 License
 -------
 
-[MIT](https://github.com/mietek/ZAgent/blob/master/LICENSE.md) © [Miëtek Bak](http://mietek.io/)
+BSD © [Miëtek Bak](http://mietek.io/)
