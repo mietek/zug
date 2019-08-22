@@ -1,4 +1,4 @@
-app_name := ZAgent
+app_name := Zug
 app_dir  := dist/$(app_name).app/Contents
 bin_dir  := $(app_dir)/MacOS
 

@@ -5,13 +5,13 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
-	<string>ZAgent</string>
+	<string>Zug</string>
 	<key>CFBundleIdentifier</key>
-	<string>io.mietek.ZAgent</string>
+	<string>io.mietek.zug</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>ZAgent</string>
+	<string>Zug</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>

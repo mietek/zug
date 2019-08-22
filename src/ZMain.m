@@ -3,7 +3,7 @@
 
 #import "ZCommon.h"
 #import "ZCocoa.h"
-#import "ZAgent.h"
+#import "ZMain.h"
 
 
 int main(int argc, char **argv) {
@@ -11,7 +11,7 @@ int main(int argc, char **argv) {
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	NSApplication *app = [NSApplication sharedApplication];
 	if (!ZAmIAuthorized()) {
-		NSRunCriticalAlertPanel(@"ZAgent cannot run.", @"Please enable access for assistive devices in the Universal Access system preference pane.", @"OK", @"", @"");
+		NSRunCriticalAlertPanel(@"Zug cannot run.", @"Please enable access for assistive devices in the Universal Access system preference pane.", @"OK", @"", @"");
 		return EXIT_FAILURE;
 	}
 	ZKeyEventState state;
@@ -20,14 +20,14 @@ int main(int argc, char **argv) {
 	state.anchor = Z_NO_ANCHOR;
 	memset(&state.anchorCount, 0, sizeof(state.anchorCount));
 	ZInstallKeyEventHandler(&ZHandleKeyEvent, &state);
-	[app setDelegate: (id)[[[ZAgent alloc] init] autorelease]];
+	[app setDelegate: (id)[[[ZMain alloc] init] autorelease]];
 	[app run];
 	[pool release];
 	return EXIT_SUCCESS;
 }
 
 
-@implementation ZAgent
+@implementation ZMain
 
 @synthesize statusItem;
 

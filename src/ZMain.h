@@ -6,7 +6,7 @@ typedef struct {
 } ZKeyEventState;
 
 
-@interface ZAgent : NSObject {}
+@interface ZMain : NSObject {}
 
 @property (nonatomic, retain) NSStatusItem *statusItem;
 
